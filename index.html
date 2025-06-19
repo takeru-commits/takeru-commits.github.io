@@ -132,7 +132,7 @@
     import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
     // =========================================================
-    // THIS IS YOUR REAL FIREBASE CONFIGURATION
+    // YOUR REAL FIREBASE CONFIGURATION IS PASTED HERE
     // =========================================================
     const firebaseConfig = {
         apiKey: "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y",
@@ -145,6 +145,7 @@
     };
 
     let db = null;
+    // This check is now designed to work with your real config
     if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
       try {
           const app = initializeApp(firebaseConfig);
@@ -333,8 +334,8 @@
             console.error("Error saving order: ", err);
             alert("An error occurred while processing your order. Please try again.");
         } finally {
-            // This will mainly reset the button on failure, as on success the modal closes
-            if (!successModal.classList.contains('hidden')) {
+            // This part will primarily run on failure now, since the modal is closed on success.
+            if (checkoutModal.classList.contains('hidden') === false) {
                  confirmButton.disabled = false;
                  confirmButton.innerHTML = originalButtonText;
             }

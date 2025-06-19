@@ -12,7 +12,7 @@
         body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9fa; }
         .hero-section { background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=2940&auto=format&fit=crop'); background-size: cover; background-position: center; }
         .menu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        .modal, .auth-modal, .checkout-modal, .success-modal, .admin-modal { transition: opacity 0.3s ease; }
+        .modal, .auth-modal, .checkout-modal, .success-modal, .admin-modal, #mobile-menu { transition: opacity 0.3s ease; }
         .modal-content, .auth-modal-content, .checkout-modal-content, .success-modal-content, .admin-modal-content { transition: transform 0.3s ease; }
         .calendar-day.preorder-day { cursor: pointer; }
         .calendar-day.preorder-day:hover { background-color: #d1fae5; }
@@ -25,51 +25,85 @@
 
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-40">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold text-green-600"><i class="fas fa-leaf mr-2"></i>Yamaguchi Halal Eats</div>
+        <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <div class="text-xl sm:text-2xl font-bold text-green-600"><i class="fas fa-leaf mr-2"></i>Yamaguchi Halal Eats</div>
+            
+            <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-4">
                 <a href="#" data-key="homeLink" class="text-gray-600 hover:text-green-600">Home</a>
                 <a href="#menu" data-key="menuLink" class="text-gray-600 hover:text-green-600">Our Menu</a>
                 <a href="#how-to-order" data-key="howToOrderLink" class="text-gray-600 hover:text-green-600">How to Order</a>
                 <a href="#about" data-key="aboutUsLink" class="text-gray-600 hover:text-green-600">About Us</a>
-                
                 <div class="w-px h-6 bg-gray-200"></div>
-
-                <!-- Language Switcher -->
                 <div id="language-switcher" class="flex items-center border border-gray-200 rounded-lg p-1">
                     <button data-lang="en" class="lang-btn text-sm font-semibold px-2 py-1 rounded-md">EN</button>
                     <button data-lang="ja" class="lang-btn text-sm font-semibold px-2 py-1 rounded-md">JA</button>
                     <button data-lang="id" class="lang-btn text-sm font-semibold px-2 py-1 rounded-md">ID</button>
                 </div>
-                
                 <div class="w-px h-6 bg-gray-200"></div>
-
-                <!-- Auth buttons -->
-                <div id="auth-links" class="flex items-center space-x-2">
-                    <button id="login-button" data-key="loginBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-sm">Log In</button>
-                    <button id="signup-button" data-key="signupBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 text-sm">Sign Up</button>
+                <div id="auth-links-desktop" class="flex items-center space-x-2">
+                    <button id="login-button-desktop" data-key="loginBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-sm">Log In</button>
+                    <button id="signup-button-desktop" data-key="signupBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 text-sm">Sign Up</button>
                 </div>
-                <div id="user-links" class="hidden items-center space-x-4">
-                    <span id="welcome-message" class="font-semibold text-sm"></span>
-                    <button id="account-button" data-key="myAccountBtn" class="text-gray-600 hover:text-green-600 text-sm"><i class="fas fa-user-circle mr-1"></i>My Account</button>
-                    <button id="logout-button" data-key="logoutBtn" class="text-gray-600 hover:text-green-600 text-sm"><i class="fas fa-sign-out-alt mr-1"></i>Log Out</button>
+                <div id="user-links-desktop" class="hidden items-center space-x-4">
+                    <span id="welcome-message-desktop" class="font-semibold text-sm"></span>
+                    <button id="account-button-desktop" data-key="myAccountBtn" class="text-gray-600 hover:text-green-600 text-sm"><i class="fas fa-user-circle mr-1"></i>My Account</button>
+                    <button id="logout-button-desktop" data-key="logoutBtn" class="text-gray-600 hover:text-green-600 text-sm"><i class="fas fa-sign-out-alt mr-1"></i>Log Out</button>
                 </div>
-
                 <button id="cart-button" class="relative text-gray-600 hover:text-green-600">
                     <i class="fas fa-shopping-cart text-xl"></i>
                     <span id="cart-count" class="absolute -top-2 -right-3 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                 </button>
             </div>
+
+            <!-- Mobile Menu Button -->
             <div class="md:hidden flex items-center space-x-4">
-                 <button id="mobile-cart-button" class="relative text-gray-600 hover:text-green-600">
+                <button id="mobile-cart-button" class="relative text-gray-600 hover:text-green-600">
                     <i class="fas fa-shopping-cart text-2xl"></i>
                     <span id="mobile-cart-count" class="absolute -top-2 -right-3 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+                <button id="mobile-menu-button" class="text-gray-600 hover:text-green-600 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
                 </button>
             </div>
         </nav>
     </header>
+    
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 bg-white z-50 p-6 flex flex-col">
+        <div class="flex justify-end mb-8">
+            <button id="close-mobile-menu-button" class="text-3xl text-gray-600">&times;</button>
+        </div>
+        <div class="flex flex-col items-center justify-center text-center flex-grow space-y-6 text-xl">
+            <a href="#" data-key="homeLink" class="mobile-menu-link text-gray-700 hover:text-green-600">Home</a>
+            <a href="#menu" data-key="menuLink" class="mobile-menu-link text-gray-700 hover:text-green-600">Our Menu</a>
+            <a href="#how-to-order" data-key="howToOrderLink" class="mobile-menu-link text-gray-700 hover:text-green-600">How to Order</a>
+            <a href="#about" data-key="aboutUsLink" class="mobile-menu-link text-gray-700 hover:text-green-600">About Us</a>
+            
+            <div class="w-full border-t border-gray-200 my-4"></div>
 
-    <!-- Content Sections -->
+            <div id="auth-links-mobile" class="flex flex-col items-center space-y-4 w-full">
+                <button id="login-button-mobile" data-key="loginBtn" class="w-full bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 text-lg">Log In</button>
+                <button id="signup-button-mobile" data-key="signupBtn" class="w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-300 text-lg">Sign Up</button>
+            </div>
+            <div id="user-links-mobile" class="hidden flex-col items-center space-y-4 w-full">
+                <span id="welcome-message-mobile" class="font-semibold text-lg"></span>
+                <button id="account-button-mobile" data-key="myAccountBtn" class="text-gray-700 hover:text-green-600 text-lg"><i class="fas fa-user-circle mr-1"></i>My Account</button>
+                <button id="logout-button-mobile" data-key="logoutBtn" class="text-gray-700 hover:text-green-600 text-lg"><i class="fas fa-sign-out-alt mr-1"></i>Log Out</button>
+            </div>
+
+            <div class="w-full border-t border-gray-200 my-4"></div>
+
+            <div id="language-switcher-mobile" class="flex items-center border border-gray-200 rounded-lg p-1">
+                <button data-lang="en" class="lang-btn text-base font-semibold px-4 py-2 rounded-md">EN</button>
+                <button data-lang="ja" class="lang-btn text-base font-semibold px-4 py-2 rounded-md">JA</button>
+                <button data-lang="id" class="lang-btn text-base font-semibold px-4 py-2 rounded-md">ID</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Content Sections (Hero, Calendar, Menu, How-to, About) -->
     <section class="hero-section text-white py-20 md:py-32"><div class="container mx-auto px-6 text-center"><h1 data-key="heroTitle" class="text-4xl md:text-6xl font-bold mb-4"></h1><p data-key="heroSubtitle" class="text-lg md:text-xl mb-8"></p><div class="max-w-2xl mx-auto"><div class="relative"><input id="search-bar" type="text" data-key="searchPlaceholder" class="w-full py-4 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-green-300"><button class="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-full px-6 py-3 hover:bg-green-700 transition"><i class="fas fa-search"></i></button></div></div></div></section>
     <section id="calendar-section" class="bg-white py-16"><div class="container mx-auto px-6"><h2 data-key="calendarTitle" class="text-3xl font-bold text-center mb-4 text-gray-800"></h2><p data-key="calendarDesc" class="text-center text-gray-600 mb-8"></p><div class="max-w-3xl mx-auto bg-white p-4 sm:p-6 rounded-lg shadow-md"><div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center"></div></div><div id="preorder-status" class="text-center mt-6 text-lg font-semibold text-green-700 h-8"></div></div></section>
     <main id="menu" class="container mx-auto px-6 py-16 pt-8"><h2 data-key="menuTitle" class="text-3xl font-bold text-center mb-12 text-gray-800"></h2><div id="menu-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div></main>
@@ -124,7 +158,7 @@
     
     // --- App Initialization & Main Logic ---
     document.addEventListener('DOMContentLoaded', () => {
-        const dom = { menuList: document.getElementById('menu-list'), searchBar: document.getElementById('search-bar'), calendarGrid: document.getElementById('calendar-grid'), preorderStatus: document.getElementById('preorder-status'), cartButton: document.getElementById('cart-button'), mobileCartButton: document.getElementById('mobile-cart-button'), cartSidebar: document.getElementById('cart-sidebar'), closeCartButton: document.getElementById('close-cart-button'), cartItemsContainer: document.getElementById('cart-items'), cartTotalElement: document.getElementById('cart-total'), cartCountElements: [document.getElementById('cart-count'), document.getElementById('mobile-cart-count')], emptyCartMessage: document.getElementById('empty-cart-message'), checkoutButton: document.getElementById('checkout-button'), checkoutModal: document.getElementById('checkout-modal'), closeCheckoutModalButton: document.getElementById('close-checkout-modal-button'), checkoutForm: document.getElementById('checkout-form'), checkoutTotalElement: document.getElementById('checkout-total'), formError: document.getElementById('form-error'), successModal: document.getElementById('success-modal'), closeSuccessModalButton: document.getElementById('close-success-modal-button'), adminPanelButton: document.getElementById('admin-panel-button'), adminModal: document.getElementById('admin-modal'), closeAdminModalButton: document.getElementById('close-admin-modal-button'), orderListContainer: document.getElementById('order-list'), authLinks: document.getElementById('auth-links'), userLinks: document.getElementById('user-links'), welcomeMessage: document.getElementById('welcome-message'), signupModal: document.getElementById('signup-modal'), loginModal: document.getElementById('login-modal'), accountModal: document.getElementById('account-modal'), languageSwitcher: document.getElementById('language-switcher') };
+        const dom = { menuList: document.getElementById('menu-list'), searchBar: document.getElementById('search-bar'), calendarGrid: document.getElementById('calendar-grid'), preorderStatus: document.getElementById('preorder-status'), cartButton: document.getElementById('cart-button'), mobileCartButton: document.getElementById('mobile-cart-button'), cartSidebar: document.getElementById('cart-sidebar'), closeCartButton: document.getElementById('close-cart-button'), cartItemsContainer: document.getElementById('cart-items'), cartTotalElement: document.getElementById('cart-total'), cartCountElements: [document.getElementById('cart-count'), document.getElementById('mobile-cart-count')], emptyCartMessage: document.getElementById('empty-cart-message'), checkoutButton: document.getElementById('checkout-button'), checkoutModal: document.getElementById('checkout-modal'), closeCheckoutModalButton: document.getElementById('close-checkout-modal-button'), checkoutForm: document.getElementById('checkout-form'), checkoutTotalElement: document.getElementById('checkout-total'), formError: document.getElementById('form-error'), successModal: document.getElementById('success-modal'), closeSuccessModalButton: document.getElementById('close-success-modal-button'), adminPanelButton: document.getElementById('admin-panel-button'), adminModal: document.getElementById('admin-modal'), closeAdminModalButton: document.getElementById('close-admin-modal-button'), orderListContainer: document.getElementById('order-list'), authLinksDesktop: document.getElementById('auth-links-desktop'), userLinksDesktop: document.getElementById('user-links-desktop'), welcomeMessageDesktop: document.getElementById('welcome-message-desktop'), authLinksMobile: document.getElementById('auth-links-mobile'), userLinksMobile: document.getElementById('user-links-mobile'), welcomeMessageMobile: document.getElementById('welcome-message-mobile'), signupModal: document.getElementById('signup-modal'), loginModal: document.getElementById('login-modal'), accountModal: document.getElementById('account-modal'), languageSwitcher: document.getElementById('language-switcher'), languageSwitcherMobile: document.getElementById('language-switcher-mobile'), mobileMenu: document.getElementById('mobile-menu'), mobileMenuButton: document.getElementById('mobile-menu-button'), closeMobileMenuButton: document.getElementById('close-mobile-menu-button') };
         
         // --- Functions ---
         const showAuthError = (modal, message) => { const errorEl = document.getElementById(`${modal}-error`); errorEl.textContent = message; errorEl.classList.remove('hidden'); };
@@ -147,21 +181,45 @@
         function closeAdminPanel() { dom.adminModal.classList.add('hidden'); document.body.style.overflow = 'auto'; }
         function loadOrders() { if (!db) return; const t = query(collection(db, "orders"), orderBy("createdAt", "desc")); onSnapshot(t, t => { if (t.empty) { dom.orderListContainer.innerHTML = '<p class="text-center text-gray-500">No orders yet.</p>'; return; } dom.orderListContainer.innerHTML = ''; t.forEach(t => { const e = t.data(), a = document.createElement('div'); a.className = "bg-white p-4 rounded-lg shadow mb-4"; const n = e.items.map(t => `<li>${t.name} (x${t.quantity}) - ¥${(t.price * t.quantity).toLocaleString()}</li>`).join(''); let s = ''; e.preOrderInfo && (s = `<div class="mt-2 p-2 bg-green-100 rounded-md"><p class="font-semibold text-green-800">Pre-Order: ${e.preOrderInfo.date} (for ${e.preOrderInfo.city})</p></div>`); a.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-bold text-lg">Order ID: ${t.id}</p> <p class="text-sm text-gray-500">Date: ${e.createdAt ? e.createdAt.toDate().toLocaleString("en-US") : 'N/A'}</p> </div> <p class="font-bold text-xl text-green-600">Total: ¥${e.total.toLocaleString()}</p> </div> ${s} <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Customer Info:</h4> <p><strong>Name:</strong> ${e.customerInfo.name}</p> <p><strong>Phone:</strong> ${e.customerInfo.phone}</p> <p><strong>Email:</strong> ${e.customerInfo.email}</p> <p><strong>Address:</strong> ${e.customerInfo.address}</p> </div> <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Order Details:</h4> <ul class="list-disc list-inside">${n}</ul> </div> `; dom.orderListContainer.appendChild(a); }); }); }
         function filterMenu() { const query = dom.searchBar.value.toLowerCase(); const filtered = menuItems.filter(item => (item.name_en.toLowerCase().includes(query) || item.name_ja.toLowerCase().includes(query) || item.name_id.toLowerCase().includes(query))); renderMenu(filtered); }
-        
+        function updateUIForAuthState(user, name) {
+            const userName = name ? name.split(' ')[0] : 'User';
+            const welcomeText = `${translations[currentLang].welcome || 'Welcome'}, ${userName}!`;
+            if (user) {
+                [dom.authLinksDesktop, dom.authLinksMobile].forEach(el => el.classList.add('hidden'));
+                [dom.userLinksDesktop, dom.userLinksMobile].forEach(el => el.classList.remove('hidden'));
+                dom.welcomeMessageDesktop.textContent = welcomeText;
+                dom.welcomeMessageMobile.textContent = welcomeText;
+            } else {
+                [dom.authLinksDesktop, dom.authLinksMobile].forEach(el => el.classList.remove('hidden'));
+                [dom.userLinksDesktop, dom.userLinksMobile].forEach(el => el.classList.add('hidden'));
+            }
+        }
+
         // --- Event Listener Bindings ---
-        const savedLang = localStorage.getItem('language') || 'en'; updateLanguage(savedLang); dom.cartCountElements.forEach(t => t.classList.add('hidden'));
+        const savedLang = localStorage.getItem('language') || 'en'; updateLanguage(savedLang);
         if(auth) {
-            onAuthStateChanged(auth, async (user) => { if (user) { currentUser = user; const userDoc = await getDoc(doc(db, "users", user.uid)); const userName = userDoc.exists() && userDoc.data().name ? userDoc.data().name.split(' ')[0] : 'User'; dom.welcomeMessage.textContent = `${translations[currentLang].welcome || 'Welcome'}, ${userName}!`; dom.authLinks.classList.add('hidden'); dom.userLinks.classList.remove('hidden'); } else { currentUser = null; dom.authLinks.classList.remove('hidden'); dom.userLinks.classList.add('hidden'); } });
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    updateUIForAuthState(user, userDoc.exists() ? userDoc.data().name : null);
+                } else {
+                    currentUser = null;
+                    updateUIForAuthState(null);
+                }
+            });
             document.getElementById('signup-form').addEventListener('submit', async (e) => { e.preventDefault(); const name = e.target['signup-name'].value; const email = e.target['signup-email'].value; const password = e.target['signup-password'].value; try { const userCredential = await createUserWithEmailAndPassword(auth, email, password); await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, phone: '', address: '' }); closeAuthModal('signup-modal'); } catch (error) { showAuthError('signup', error.message); } });
             document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const email = e.target['login-email'].value; const password = e.target['login-password'].value; try { await signInWithEmailAndPassword(auth, email, password); closeAuthModal('login-modal'); } catch (error) { showAuthError('login', error.message); } });
-            document.getElementById('logout-button').addEventListener('click', () => { signOut(auth); });
+            [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); }));
             document.getElementById('account-form').addEventListener('submit', async (e) => { e.preventDefault(); if (!currentUser) return; const name = e.target['account-name'].value; const phone = e.target['account-phone'].value; const address = e.target['account-address'].value; try { await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); const successMsg = document.getElementById('account-success'); successMsg.classList.remove('hidden'); setTimeout(() => successMsg.classList.add('hidden'), 3000); } catch (error) { showAuthError('account', error.message); } });
-            document.getElementById('account-button').addEventListener('click', async () => { if (!currentUser) return; const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { const data = userDoc.data(); document.getElementById('account-name').value = data.name || ''; document.getElementById('account-phone').value = data.phone || ''; document.getElementById('account-address').value = data.address || ''; } openAuthModal('account-modal'); });
+            [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { if (!currentUser) return; dom.mobileMenu.classList.add('hidden'); const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { const data = userDoc.data(); document.getElementById('account-name').value = data.name || ''; document.getElementById('account-phone').value = data.phone || ''; document.getElementById('account-address').value = data.address || ''; } openAuthModal('account-modal'); }));
         }
         dom.menuList.addEventListener('click', addToCart);
-        dom.languageSwitcher.addEventListener('click', (e) => { const lang = e.target.closest('.lang-btn')?.dataset.lang; if(lang) updateLanguage(lang); });
-        document.getElementById('signup-button').addEventListener('click', () => openAuthModal('signup-modal')); document.getElementById('close-signup-modal-button').addEventListener('click', () => closeAuthModal('signup-modal'));
-        document.getElementById('login-button').addEventListener('click', () => openAuthModal('login-modal')); document.getElementById('close-login-modal-button').addEventListener('click', () => closeAuthModal('login-modal'));
+        [dom.languageSwitcher, dom.languageSwitcherMobile].forEach(switcher => switcher.addEventListener('click', (e) => { const lang = e.target.closest('.lang-btn')?.dataset.lang; if(lang) updateLanguage(lang); }));
+        [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); }));
+        document.getElementById('close-signup-modal-button').addEventListener('click', () => closeAuthModal('signup-modal'));
+        [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); }));
+        document.getElementById('close-login-modal-button').addEventListener('click', () => closeAuthModal('login-modal'));
         document.getElementById('close-account-modal-button').addEventListener('click', () => closeAuthModal('account-modal'));
         dom.closeCheckoutModalButton.addEventListener('click', closeCheckoutModal); dom.checkoutModal.addEventListener('click', e => e.target === dom.checkoutModal && closeCheckoutModal());
         dom.closeSuccessModalButton.addEventListener('click', closeSuccessModal);
@@ -172,6 +230,9 @@
         dom.searchBar.addEventListener('input', filterMenu);
         dom.adminPanelButton.addEventListener('click', openAdminPanel);
         dom.closeAdminModalButton.addEventListener('click', closeAdminPanel);
+        dom.mobileMenuButton.addEventListener('click', () => { dom.mobileMenu.classList.remove('hidden'); document.body.style.overflow = 'hidden'; });
+        dom.closeMobileMenuButton.addEventListener('click', () => { dom.mobileMenu.classList.add('hidden'); document.body.style.overflow = 'auto'; });
+        dom.mobileMenu.querySelectorAll('.mobile-menu-link').forEach(link => link.addEventListener('click', () => { dom.mobileMenu.classList.add('hidden'); document.body.style.overflow = 'auto'; }));
     });
     </script>
 </body>

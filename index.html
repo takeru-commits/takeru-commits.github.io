@@ -198,27 +198,19 @@
         // --- Event Listener Bindings ---
         const savedLang = localStorage.getItem('language') || 'en'; updateLanguage(savedLang);
         if(auth) {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    currentUser = user;
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    updateUIForAuthState(user, userDoc.exists() ? userDoc.data().name : null);
-                } else {
-                    currentUser = null;
-                    updateUIForAuthState(null);
-                }
-            });
+            onAuthStateChanged(auth, async (user) => { if (user) { currentUser = user; const userDoc = await getDoc(doc(db, "users", user.uid)); updateUIForAuthState(user, userDoc.exists() ? userDoc.data().name : null); } else { currentUser = null; updateUIForAuthState(null); } });
             document.getElementById('signup-form').addEventListener('submit', async (e) => { e.preventDefault(); const name = e.target['signup-name'].value; const email = e.target['signup-email'].value; const password = e.target['signup-password'].value; try { const userCredential = await createUserWithEmailAndPassword(auth, email, password); await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, phone: '', address: '' }); closeAuthModal('signup-modal'); } catch (error) { showAuthError('signup', error.message); } });
             document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const email = e.target['login-email'].value; const password = e.target['login-password'].value; try { await signInWithEmailAndPassword(auth, email, password); closeAuthModal('login-modal'); } catch (error) { showAuthError('login', error.message); } });
-            [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); }));
             document.getElementById('account-form').addEventListener('submit', async (e) => { e.preventDefault(); if (!currentUser) return; const name = e.target['account-name'].value; const phone = e.target['account-phone'].value; const address = e.target['account-address'].value; try { await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); const successMsg = document.getElementById('account-success'); successMsg.classList.remove('hidden'); setTimeout(() => successMsg.classList.add('hidden'), 3000); } catch (error) { showAuthError('account', error.message); } });
+            
+            [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); }));
             [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { if (!currentUser) return; dom.mobileMenu.classList.add('hidden'); const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { const data = userDoc.data(); document.getElementById('account-name').value = data.name || ''; document.getElementById('account-phone').value = data.phone || ''; document.getElementById('account-address').value = data.address || ''; } openAuthModal('account-modal'); }));
+            [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); }));
+            [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); }));
         }
         dom.menuList.addEventListener('click', addToCart);
         [dom.languageSwitcher, dom.languageSwitcherMobile].forEach(switcher => switcher.addEventListener('click', (e) => { const lang = e.target.closest('.lang-btn')?.dataset.lang; if(lang) updateLanguage(lang); }));
-        [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); }));
         document.getElementById('close-signup-modal-button').addEventListener('click', () => closeAuthModal('signup-modal'));
-        [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); }));
         document.getElementById('close-login-modal-button').addEventListener('click', () => closeAuthModal('login-modal'));
         document.getElementById('close-account-modal-button').addEventListener('click', () => closeAuthModal('account-modal'));
         dom.closeCheckoutModalButton.addEventListener('click', closeCheckoutModal); dom.checkoutModal.addEventListener('click', e => e.target === dom.checkoutModal && closeCheckoutModal());

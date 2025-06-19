@@ -131,13 +131,17 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
     import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
+    // =========================================================
+    // THIS IS YOUR REAL FIREBASE CONFIGURATION
+    // =========================================================
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y",
+        authDomain: "yamaguchi-halal-eats.firebaseapp.com",
+        projectId: "yamaguchi-halal-eats",
+        storageBucket: "yamaguchi-halal-eats.appspot.com",
+        messagingSenderId: "471358397224",
+        appId: "1:471358397224:web:46184a676f2b9b23860e1d",
+        measurementId: "G-XKK7QMMWWN"
     };
 
     let db = null;
@@ -308,17 +312,16 @@
         }
 
         try {
-            // Simulate a short delay for the loading animation to be visible
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
             await addDoc(collection(db, "orders"), orderData);
 
-            // On success
+            // Simulate a short delay for the loading animation to be visible before showing success
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
             closeCheckoutModal();
             showSuccessModal();
             closeCart();
             
-            // Reset state
+            // Reset state after success
             cart = [];
             selectedPreOrder = { date: null, city: null };
             preorderStatus.textContent = '';
@@ -330,10 +333,11 @@
             console.error("Error saving order: ", err);
             alert("An error occurred while processing your order. Please try again.");
         } finally {
-            // This part will run after success or failure, but since we close the modal on success, 
-            // we only need to worry about resetting the button on failure.
-            confirmButton.disabled = false;
-            confirmButton.innerHTML = originalButtonText;
+            // This will mainly reset the button on failure, as on success the modal closes
+            if (!successModal.classList.contains('hidden')) {
+                 confirmButton.disabled = false;
+                 confirmButton.innerHTML = originalButtonText;
+            }
         }
     }
 

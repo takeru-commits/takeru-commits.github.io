@@ -122,7 +122,7 @@
     <!-- Modals (Menu, Cart, Checkout, Success, Admin) -->
     <div id="menu-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div id="modal-content" class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 id="modal-restaurant-name" class="text-2xl font-bold"></h3><button id="close-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div id="modal-body" class="p-6 overflow-y-auto"></div><div class="p-4 bg-gray-50 border-t"><p class="text-sm text-gray-600 text-center">All dishes are Halal certified.</p></div></div></div>
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col"><div class="p-6 border-b flex justify-between items-center"><h3 class="text-2xl font-bold">Shopping Cart</h3><button id="close-cart-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div id="cart-items" class="p-6 overflow-y-auto flex-grow"><p id="empty-cart-message" class="text-gray-500">Your cart is empty.</p></div><div class="p-6 border-t bg-gray-50"><div class="flex justify-between items-center mb-4"><span class="text-lg font-medium">Total:</span><span id="cart-total" class="text-2xl font-bold">¥0</span></div><button id="checkout-button" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition disabled:bg-gray-400">Checkout</button></div></div>
-    <div id="checkout-modal" class="checkout-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div id="checkout-modal-content" class="checkout-modal-content bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 class="text-2xl font-bold">Confirm Your Order</h3><button id="close-checkout-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="checkout-form" class="p-6 overflow-y-auto" novalidate><h4 class="text-lg font-semibold mb-4">Your Information</h4><div class="space-y-4"><div><label for="customer-name" class="block text-sm font-medium text-gray-700">Name</label><input type="text" id="customer-name" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-phone" class="block text-sm font-medium text-gray-700">Phone Number</label><input type="tel" id="customer-phone" name="phone" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-email" class="block text-sm font-medium text-gray-700">Email Address</label><input type="email" id="customer-email" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-address" class="block text-sm font-medium text-gray-700">Delivery Address</label><textarea id="customer-address" name="address" rows="3" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></textarea></div></div><div id="form-error" class="text-red-500 text-sm mt-4 hidden">Please fill in all fields.</div><div class="mt-6 border-t pt-4"><div class="flex justify-between items-center text-lg"><span>Total Payment:</span><span id="checkout-total" class="font-bold text-xl"></span></div></div></form><div class="p-6 bg-gray-50 border-t"><button type="submit" id="confirm-order-button" form="checkout-form" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition">Confirm Order</button></div></div></div>
+    <div id="checkout-modal" class="checkout-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div id="checkout-modal-content" class="checkout-modal-content bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 class="text-2xl font-bold">Confirm Your Order</h3><button id="close-checkout-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="checkout-form" class="p-6 overflow-y-auto" novalidate><h4 class="text-lg font-semibold mb-4">Your Information</h4><div class="space-y-4"><div><label for="customer-name" class="block text-sm font-medium text-gray-700">Name</label><input type="text" id="customer-name" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-phone" class="block text-sm font-medium text-gray-700">Phone Number</label><input type="tel" id="customer-phone" name="phone" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-email" class="block text-sm font-medium text-gray-700">Email Address</label><input type="email" id="customer-email" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-address" class="block text-sm font-medium text-gray-700">Delivery Address</label><textarea id="customer-address" name="address" rows="3" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></textarea></div></div><div id="form-error" class="text-red-500 text-sm mt-4 hidden">Please fill in all fields.</div><div class="mt-6 border-t pt-4"><div class="flex justify-between items-center text-lg"><span>Total Payment:</span><span id="checkout-total" class="font-bold text-xl"></span></div></div></form><div class="p-6 bg-gray-50 border-t"><button type="submit" id="confirm-order-button" form="checkout-form" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition disabled:opacity-75">Confirm Order</button></div></div></div>
     <div id="success-modal" class="success-modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 hidden"><div class="bg-white rounded-lg shadow-xl w-full max-w-sm text-center p-8"><div class="text-green-500 mb-4"><i class="fas fa-check-circle fa-4x"></i></div><h3 class="text-2xl font-bold mb-2">Thank You for Your Order!</h3><p class="text-gray-600 mb-6">Your order has been completed.</p><button id="close-success-modal-button" class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition">Close</button></div></div>
     <div id="admin-modal" class="admin-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div id="admin-modal-content" class="admin-modal-content bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 class="text-2xl font-bold">Order Management Panel</h3><button id="close-admin-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div id="order-list" class="p-6 overflow-y-auto bg-gray-100 flex-grow"><p class="text-center text-gray-500">No orders yet.</p></div></div></div>
 
@@ -269,24 +269,29 @@
     
     async function handleOrderSubmit(e) {
         e.preventDefault();
+        const confirmButton = document.getElementById('confirm-order-button');
+        
         if (!checkoutForm.checkValidity()) {
             formError.classList.remove('hidden');
             return;
         }
         formError.classList.add('hidden');
 
-        if (!db) {
-            alert("Database connection error. Order cannot be saved because Firebase is not configured.");
-            return;
-        }
-
-        const confirmButton = document.getElementById('confirm-order-button');
+        // Start loading state
         const originalButtonText = confirmButton.innerHTML;
         confirmButton.disabled = true;
         confirmButton.innerHTML = `
             <i class="fas fa-spinner fa-spin mr-2"></i>
             Loading...
         `;
+
+        // Check for Firebase connection after showing loading state
+        if (!db) {
+            alert("Database connection error. Order cannot be saved because Firebase is not configured.");
+            confirmButton.disabled = false;
+            confirmButton.innerHTML = originalButtonText;
+            return;
+        }
 
         const formData = new FormData(checkoutForm);
         const customerDetails = Object.fromEntries(formData.entries());
@@ -303,9 +308,9 @@
         }
 
         try {
-            // Add a 2-second delay to ensure the loading animation is visible
+            // Simulate a short delay for the loading animation to be visible
             await new Promise(resolve => setTimeout(resolve, 2000));
-
+            
             await addDoc(collection(db, "orders"), orderData);
 
             // On success
@@ -325,7 +330,8 @@
             console.error("Error saving order: ", err);
             alert("An error occurred while processing your order. Please try again.");
         } finally {
-            // Reset button state regardless of success or failure
+            // This part will run after success or failure, but since we close the modal on success, 
+            // we only need to worry about resetting the button on failure.
             confirmButton.disabled = false;
             confirmButton.innerHTML = originalButtonText;
         }

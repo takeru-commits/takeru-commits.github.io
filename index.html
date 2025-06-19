@@ -131,14 +131,15 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
     import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y",
+    authDomain: "yamaguchi-halal-eats.firebaseapp.com",
+    projectId: "yamaguchi-halal-eats",
+    storageBucket: "yamaguchi-halal-eats.firebasestorage.app",
+    messagingSenderId: "471358397224",
+    appId: "1:471358397224:web:46184a676f2b9b23860e1d",
+    measurementId: "G-XKK7QMMWWN"
+  };
 
     let db = null;
     if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {

@@ -12,28 +12,9 @@
         html { scroll-behavior: smooth; }
         body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9fa; }
         .hero-section {
-            position: relative;
-            color: white;
-        }
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('tonkotu.jpg');
             background-size: cover;
             background-position: center;
-            transition: opacity 1.5s ease-in-out;
-            z-index: -2;
-        }
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: -1;
         }
         .menu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
         .modal, .auth-modal, .checkout-modal, .success-modal, .admin-modal, #mobile-menu { transition: opacity 0.3s ease; }
@@ -132,21 +113,7 @@
 
 
     <!-- Content Sections -->
-    <section class="hero-section py-20 md:py-32">
-        <div id="hero-bg-1" class="hero-bg"></div>
-        <div id="hero-bg-2" class="hero-bg opacity-0"></div>
-        <div class="hero-overlay"></div>
-        <div class="container mx-auto px-6 text-center relative z-10">
-            <h1 data-key="heroTitle" class="text-4xl md:text-6xl font-bold mb-4"></h1>
-            <p data-key="heroSubtitle" class="text-lg md:text-xl mb-8"></p>
-            <div class="max-w-2xl mx-auto">
-                <div class="relative">
-                    <input id="search-bar" type="text" data-key="searchPlaceholder" class="w-full py-4 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-green-300">
-                    <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-full px-6 py-3 hover:bg-green-700 transition"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-        </div>
-    </section>
+    <section class="hero-section text-white py-20 md:py-32"><div class="container mx-auto px-6 text-center"><h1 data-key="heroTitle" class="text-4xl md:text-6xl font-bold mb-4"></h1><p data-key="heroSubtitle" class="text-lg md:text-xl mb-8"></p><div class="max-w-2xl mx-auto"><div class="relative"><input id="search-bar" type="text" data-key="searchPlaceholder" class="w-full py-4 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-green-300"><button class="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-full px-6 py-3 hover:bg-green-700 transition"><i class="fas fa-search"></i></button></div></div></div></section>
     <section id="what-is-halal" class="bg-green-50 py-16">
         <div class="container mx-auto px-6 text-center max-w-3xl">
             <h2 data-key="whatIsHalalTitle" class="text-3xl font-bold text-center mb-4 text-gray-800"></h2>
@@ -236,7 +203,7 @@
     
     // --- App Initialization & Main Logic ---
     document.addEventListener('DOMContentLoaded', () => {
-        const dom = { menuList: document.getElementById('menu-list'), searchBar: document.getElementById('search-bar'), calendarGrid: document.getElementById('calendar-grid'), preorderStatus: document.getElementById('preorder-status'), cartButton: document.getElementById('cart-button'), mobileCartButton: document.getElementById('mobile-cart-button'), cartSidebar: document.getElementById('cart-sidebar'), closeCartButton: document.getElementById('close-cart-button'), cartItemsContainer: document.getElementById('cart-items'), cartTotalElement: document.getElementById('cart-total'), cartSubtotalElement: document.getElementById('cart-subtotal'), discountRow: document.getElementById('discount-row'), cartDiscountElement: document.getElementById('cart-discount'), couponSection: document.getElementById('coupon-section'), applyCouponButton: document.getElementById('apply-coupon-button'), cartCountElements: [document.getElementById('cart-count'), document.getElementById('mobile-cart-count')], emptyCartMessage: document.getElementById('empty-cart-message'), checkoutButton: document.getElementById('checkout-button'), checkoutModal: document.getElementById('checkout-modal'), closeCheckoutModalButton: document.getElementById('close-checkout-modal-button'), checkoutForm: document.getElementById('checkout-form'), checkoutTotalElement: document.getElementById('checkout-total'), formError: document.getElementById('form-error'), successModal: document.getElementById('success-modal'), closeSuccessModalButton: document.getElementById('close-success-modal-button'), adminPanelButton: document.getElementById('admin-panel-button'), adminModal: document.getElementById('admin-modal'), closeAdminModalButton: document.getElementById('close-admin-modal-button'), orderListContainer: document.getElementById('order-list'), authLinksDesktop: document.getElementById('auth-links-desktop'), userLinksDesktop: document.getElementById('user-links-desktop'), welcomeMessageDesktop: document.getElementById('welcome-message-desktop'), authLinksMobile: document.getElementById('auth-links-mobile'), userLinksMobile: document.getElementById('user-links-mobile'), welcomeMessageMobile: document.getElementById('welcome-message-mobile'), signupModal: document.getElementById('signup-modal'), loginModal: document.getElementById('login-modal'), accountModal: document.getElementById('account-modal'), languageSwitcher: document.getElementById('language-switcher'), languageSwitcherMobile: document.getElementById('language-switcher-mobile'), mobileMenu: document.getElementById('mobile-menu'), mobileMenuButton: document.getElementById('mobile-menu-button'), closeMobileMenuButton: document.getElementById('close-mobile-menu-button'), contactForm: document.getElementById('contact-form'), contactFormFeedback: document.getElementById('contact-form-feedback'), contactSubmitButton: document.getElementById('contact-submit-button'), myCouponsList: document.getElementById('my-coupons-list'), heroBg1: document.getElementById('hero-bg-1'), heroBg2: document.getElementById('hero-bg-2') };
+        const dom = { menuList: document.getElementById('menu-list'), searchBar: document.getElementById('search-bar'), calendarGrid: document.getElementById('calendar-grid'), preorderStatus: document.getElementById('preorder-status'), cartButton: document.getElementById('cart-button'), mobileCartButton: document.getElementById('mobile-cart-button'), cartSidebar: document.getElementById('cart-sidebar'), closeCartButton: document.getElementById('close-cart-button'), cartItemsContainer: document.getElementById('cart-items'), cartTotalElement: document.getElementById('cart-total'), cartSubtotalElement: document.getElementById('cart-subtotal'), discountRow: document.getElementById('discount-row'), cartDiscountElement: document.getElementById('cart-discount'), couponSection: document.getElementById('coupon-section'), applyCouponButton: document.getElementById('apply-coupon-button'), cartCountElements: [document.getElementById('cart-count'), document.getElementById('mobile-cart-count')], emptyCartMessage: document.getElementById('empty-cart-message'), checkoutButton: document.getElementById('checkout-button'), checkoutModal: document.getElementById('checkout-modal'), closeCheckoutModalButton: document.getElementById('close-checkout-modal-button'), checkoutForm: document.getElementById('checkout-form'), checkoutTotalElement: document.getElementById('checkout-total'), formError: document.getElementById('form-error'), successModal: document.getElementById('success-modal'), closeSuccessModalButton: document.getElementById('close-success-modal-button'), adminPanelButton: document.getElementById('admin-panel-button'), adminModal: document.getElementById('admin-modal'), closeAdminModalButton: document.getElementById('close-admin-modal-button'), orderListContainer: document.getElementById('order-list'), authLinksDesktop: document.getElementById('auth-links-desktop'), userLinksDesktop: document.getElementById('user-links-desktop'), welcomeMessageDesktop: document.getElementById('welcome-message-desktop'), authLinksMobile: document.getElementById('auth-links-mobile'), userLinksMobile: document.getElementById('user-links-mobile'), welcomeMessageMobile: document.getElementById('welcome-message-mobile'), signupModal: document.getElementById('signup-modal'), loginModal: document.getElementById('login-modal'), accountModal: document.getElementById('account-modal'), languageSwitcher: document.getElementById('language-switcher'), languageSwitcherMobile: document.getElementById('language-switcher-mobile'), mobileMenu: document.getElementById('mobile-menu'), mobileMenuButton: document.getElementById('mobile-menu-button'), closeMobileMenuButton: document.getElementById('close-mobile-menu-button'), contactForm: document.getElementById('contact-form'), contactFormFeedback: document.getElementById('contact-form-feedback'), contactSubmitButton: document.getElementById('contact-submit-button'), myCouponsList: document.getElementById('my-coupons-list') };
         
         // --- Functions ---
         const showAuthError = (modal, message) => { const errorEl = document.getElementById(`${modal}-error`); errorEl.textContent = message; errorEl.classList.remove('hidden'); };
@@ -285,34 +252,9 @@
                 dom.couponSection.classList.add('hidden');
             }
         }
-        function startHeroSlideshow() {
-            const slideshowImages = [
-                'Gemini_Generated_Image_nyfwcinyfwcinyfw.jpg',
-                'https://images.unsplash.com/photo-1626084469318-26122a751593?q=80&w=2940&auto=format&fit=crop', // Satay
-                'https://images.unsplash.com/photo-1599602235011-95b62a773f77?q=80&w=2849&auto=format&fit=crop', // Nasi Goreng
-                'https://images.unsplash.com/photo-1626803364123-0176e053d231?q=80&w=2787&auto=format&fit=crop'  // Lassi
-            ];
-            let currentImageIndex = 0;
-            let activeBg = dom.heroBg1;
-            let inactiveBg = dom.heroBg2;
-
-            activeBg.style.backgroundImage = `url('${slideshowImages[0]}')`;
-
-            setInterval(() => {
-                currentImageIndex = (currentImageIndex + 1) % slideshowImages.length;
-                
-                inactiveBg.style.backgroundImage = `url('${slideshowImages[currentImageIndex]}')`;
-                
-                activeBg.style.opacity = 0;
-                inactiveBg.style.opacity = 1;
-
-                [activeBg, inactiveBg] = [inactiveBg, activeBg];
-            }, 5000);
-        }
 
         // --- Event Listener Bindings ---
         const savedLang = localStorage.getItem('language') || 'en'; updateLanguage(savedLang);
-        startHeroSlideshow();
         if(auth) {
             onAuthStateChanged(auth, async (user) => { if (user) { currentUser = user; const userDoc = await getDoc(doc(db, "users", user.uid)); updateUIForAuthState(user, userDoc.exists() ? userDoc.data() : null); } else { currentUser = null; updateUIForAuthState(null); } });
             document.getElementById('signup-form').addEventListener('submit', async (e) => { e.preventDefault(); const name = e.target['signup-name'].value; const email = e.target['signup-email'].value; const password = e.target['signup-password'].value; try { const userCredential = await createUserWithEmailAndPassword(auth, email, password); await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, phone: '', address: '', hasCoupon: true }); closeAuthModal('signup-modal'); } catch (error) { showAuthError('signup', error.message); } });

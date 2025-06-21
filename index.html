@@ -378,8 +378,11 @@
                 'yakitoridon.jpg.png', // Chicken Satay
                 'mangorasshi.jpg.png', // Rasshi
             ];
+            slideshowImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+    });
             let currentImageIndex = 0;
-
             heroSection.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${slideshowImages[currentImageIndex]}')`;
 
             setInterval(() => {

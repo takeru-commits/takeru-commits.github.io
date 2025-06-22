@@ -49,36 +49,32 @@ let isCouponApplied = false;
 // --- App Initialization & Main Logic ---
 document.addEventListener('DOMContentLoaded', () => {
     const dom = { 
-        // ●↓この場所を変更してください：menuList はもうHTMLにないので削除。代わりに新しい要素を追加します。
-        // menuList: document.getElementById('menu-list'), 
-        // ●↑この場所を変更してください
-
+        // menuList: document.getElementById('menu-list'), // このIDはHTMLから削除されるため、不要になります
         searchBar: document.getElementById('search-bar'),
         calendarGrid: document.getElementById('calendar-grid'),
         preorderStatus: document.getElementById('preorder-status'),
         cartButton: document.getElementById('cart-button'), mobileCartButton: document.getElementById('mobile-cart-button'), cartSidebar: document.getElementById('cart-sidebar'), closeCartButton: document.getElementById('close-cart-button'), cartItemsContainer: document.getElementById('cart-items'), cartTotalElement: document.getElementById('cart-total'), cartSubtotalElement: document.getElementById('cart-subtotal'), discountRow: document.getElementById('discount-row'), cartDiscountElement: document.getElementById('cart-discount'), couponSection: document.getElementById('coupon-section'), applyCouponButton: document.getElementById('apply-coupon-button'), cartCountElements: [document.getElementById('cart-count'), document.getElementById('mobile-cart-count')], emptyCartMessage: document.getElementById('empty-cart-message'), checkoutButton: document.getElementById('checkout-button'), checkoutModal: document.getElementById('checkout-modal'), closeCheckoutModalButton: document.getElementById('close-checkout-modal-button'), checkoutForm: document.getElementById('checkout-form'), checkoutTotalElement: document.getElementById('checkout-total'), formError: document.getElementById('form-error'), successModal: document.getElementById('success-modal'), closeSuccessModalButton: document.getElementById('close-success-modal-button'), adminPanelButton: document.getElementById('admin-panel-button'), adminModal: document.getElementById('admin-modal'), closeAdminModalButton: document.getElementById('close-admin-modal-button'), orderListContainer: document.getElementById('order-list'), authLinksDesktop: document.getElementById('auth-links-desktop'), userLinksDesktop: document.getElementById('user-links-desktop'), welcomeMessageDesktop: document.getElementById('welcome-message-desktop'), authLinksMobile: document.getElementById('auth-links-mobile'), userLinksMobile: document.getElementById('user-links-mobile'), welcomeMessageMobile: document.getElementById('welcome-message-mobile'), signupModal: document.getElementById('signup-modal'), loginModal: document.getElementById('login-modal'), accountModal: document.getElementById('account-modal'), languageSwitcher: document.getElementById('language-switcher'), languageSwitcherMobile: document.getElementById('language-switcher-mobile'), mobileMenu: document.getElementById('mobile-menu'), mobileMenuButton: document.getElementById('mobile-menu-button'), closeMobileMenuButton: document.getElementById('close-mobile-menu-button'), contactForm: document.getElementById('contact-form'), contactFormFeedback: document.getElementById('contact-form-feedback'), contactSubmitButton: document.getElementById('contact-submit-button'), myCouponsList: document.getElementById('my-coupons-list'),
-        // ●↓この場所を追加してください
-        menuButtons: document.querySelectorAll('.menu-button'), // メニューカテゴリ選択ボタン
-        menuDisplayArea: document.getElementById('menu-display-area') // メニューコンテンツの親要素
-        // ●↑この場所を追加してください
+        // メニューカテゴリ関連のDOM要素を追加
+        menuButtons: document.querySelectorAll('.menu-button'),
+        menuDisplayArea: document.getElementById('menu-display-area')
     };
     loadCartFromLocalStorage();
 
     // --- Functions ---
     function loadCartFromLocalStorage() {
-      const savedCart = localStorage.getItem('cart');
-      if (savedCart) {
-        try {
-          cart = JSON.parse(savedCart);
-        } catch (e) {
-          console.error("カート情報の復元に失敗しました: ", e);
-          cart = [];
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+            try {
+                cart = JSON.parse(savedCart);
+            } catch (e) {
+                console.error("カート情報の復元に失敗しました: ", e);
+                cart = [];
+            }
         }
-      }
     }
 
     function saveCartToLocalStorage() {
-      localStorage.setItem('cart', JSON.stringify(cart));
+        localStorage.setItem('cart', JSON.stringify(cart));
     }
 
     const showAuthError = (modal, message) => { const errorEl = document.getElementById(`${modal}-error`); errorEl.textContent = message; errorEl.classList.remove('hidden'); };
@@ -103,11 +99,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // ●↓この場所を変更してください
-        // renderMenu(menuItems); // この行は古いメニューレンダリングのため削除
-        renderAllCategoryMenus(); // 全てのカテゴリメニューを言語変更時に再レンダリング
-        // ●↑この場所を変更してください
+        // 言語ボタンのハイライトを更新
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelectorAll(`.lang-btn[data-lang="${lang}"]`).forEach(btn => {
+            btn.classList.add('active');
+        });
 
+        renderAllCategoryMenus(); // 全てのカテゴリメニューを言語変更時に再レンダリング
         const today = new Date();
         generateCalendar(today.getFullYear(), today.getMonth() + 1);
         updateCart();
@@ -116,14 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
     function generateCalendar(year, month) { dom.calendarGrid.innerHTML = ''; const monthIndex = month - 1; const firstDay = new Date(year, monthIndex, 1).getDay(); const daysInMonth = new Date(year, month, 0).getDate(); const weekDays = currentLang === 'ja' ? ['日', '月', '火', '水', '木', '金', '土'] : (currentLang === 'id' ? ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']); weekDays.forEach(day => { const dayHeader = document.createElement('div'); dayHeader.className = 'font-bold text-gray-700 p-2'; dayHeader.textContent = day; dom.calendarGrid.appendChild(dayHeader); }); for (let i = 0; i < firstDay; i++) { dom.calendarGrid.appendChild(document.createElement('div')); } for (let day = 1; day <= daysInMonth; day++) { const dayCell = document.createElement('div'); const date = new Date(year, monthIndex, day); const dayOfWeek = date.getDay(); dayCell.className = 'calendar-day p-2 rounded-lg border border-gray-200 flex flex-col justify-between h-24 sm:h-28'; let contentHTML = `<span class="font-bold">${day}</span>`; let city = null; let cityKey = ''; if (dayOfWeek === 6) { dayCell.classList.add('bg-blue-50', 'preorder-day'); city = 'Yamaguchi City'; cityKey = 'preorderYamaguchi'; } else if (dayOfWeek === 0) { dayCell.classList.add('bg-red-50', 'preorder-day'); city = 'Ube City'; cityKey = 'preorderUbe'; } else { dayCell.classList.add('bg-gray-50'); } dayCell.innerHTML = contentHTML + (city ? `<span class="text-sm font-semibold ${dayOfWeek === 6 ? 'text-blue-700' : 'text-red-700'} mt-auto">${city}</span>` : ''); if (city) { dayCell.addEventListener('click', () => { document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected')); dayCell.classList.add('selected'); const dateString = new Intl.DateTimeFormat(currentLang, { month: 'long', day: 'numeric' }).format(date); selectedPreOrder = { date: dateString, city: city }; dom.preorderStatus.textContent = translations[currentLang][cityKey].replace('{date}', dateString); }); } dom.calendarGrid.appendChild(dayCell); } }
         
-    // ●↓この場所を変更してください：renderMenu 関数を修正（検索機能用）
-    function renderMenu(itemsToRender, targetContainerId) { // targetContainerIdを引数に追加
+    function renderMenu(itemsToRender, targetContainerId) { 
         const targetContainer = document.getElementById(targetContainerId);
         if (!targetContainer) {
             console.warn(`Target container with ID ${targetContainerId} not found for rendering.`);
             return;
         }
-        targetContainer.innerHTML = ''; // コンテナの内容をクリア
+        targetContainer.innerHTML = ''; 
 
         if (itemsToRender.length === 0) {
             targetContainer.innerHTML = `<p class="text-gray-600 col-span-full text-center">${translations[currentLang].noMatchingDishes || 'No matching dishes found.'}</p>`;
@@ -132,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         itemsToRender.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'bg-white rounded-lg shadow-lg overflow-hidden flex flex-col'; // menu-cardクラスは不要になりました
+            card.className = 'bg-white rounded-lg shadow-lg overflow-hidden flex flex-col'; 
             const name = item[`name_${currentLang}`] || item.name_en;
             const description = item[`description_${currentLang}`] || item.description_en;
             card.innerHTML = `
@@ -151,26 +150,20 @@ document.addEventListener('DOMContentLoaded', () => {
             targetContainer.appendChild(card);
         });
     }
-    // ●↑この場所を変更してください
 
-    // ●↓この場所を追加してください：全てのカテゴリメニューを初期描画する新しい関数
     function renderAllCategoryMenus() {
         const categories = ['japanese', 'indonesian', 'sweets', 'drinks'];
         categories.forEach(category => {
             const categoryItems = menuItems.filter(item => item.category === category);
-            // 各カテゴリのグリッドコンテナにレンダリング
             renderMenu(categoryItems, `${category}-menu-grid`); 
         });
     }
-    // ●↑この場所を追加してください
 
     function addToCart(e) {
         const button = e.target.closest('.add-to-cart-button');
         if (!button) return;
 
-        // ●↓この場所を変更してください：closest('.menu-card') の代わりに closest('.bg-white.rounded-lg.shadow-lg') など、より具体的なクラスで親要素を特定
         const card = button.closest('.bg-white.rounded-lg.shadow-lg'); 
-        // ●↑この場所を変更してください
 
         const itemImage = card.querySelector('img');
         const cartIcon = document.getElementById('cart-button');
@@ -247,29 +240,24 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeAdminPanel() { dom.adminModal.classList.add('hidden'); document.body.style.overflow = 'auto'; }
     function loadOrders() { if (!db) return; const t = query(collection(db, "orders"), orderBy("createdAt", "desc")); onSnapshot(t, t => { if (t.empty) { dom.orderListContainer.innerHTML = '<p class="text-center text-gray-500">No orders yet.</p>'; return; } dom.orderListContainer.innerHTML = ''; t.forEach(t => { const e = t.data(), a = document.createElement('div'); a.className = "bg-white p-4 rounded-lg shadow mb-4"; const n = e.items.map(t => `<li>${t.name} (x${t.quantity}) - ¥${(t.price * t.quantity).toLocaleString()}</li>`).join(''); let s = ''; e.preOrderInfo && (s = `<div class="mt-2 p-2 bg-green-100 rounded-md"><p class="font-semibold text-green-800">Pre-Order: ${e.preOrderInfo.date} (for ${e.preOrderInfo.city})</p></div>`); a.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-bold text-lg">Order ID: ${t.id}</p> <p class="text-sm text-gray-500">Date: ${e.createdAt ? e.createdAt.toDate().toLocaleString("en-US") : 'N/A'}</p> </div> <p class="font-bold text-xl text-green-600">Total: ¥${e.total.toLocaleString()}</p> </div> ${s} <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Customer Info:</h4> <p><strong>Name:</strong> ${e.customerInfo.name}</p> <p><strong>Phone:</strong> ${e.customerInfo.phone}</p> <p><strong>Email:</strong> ${e.customerInfo.email}</p> <p><strong>Address:</strong> ${e.customerInfo.address}</p> </div> <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Order Details:</h4> <ul class="list-disc list-inside">${n}</ul> </div> `; dom.orderListContainer.appendChild(a); }); }); }
         
-    // ●↓この場所を変更してください：filterMenu 関数を修正（アクティブなカテゴリ内を検索するように）
     function filterMenu() {
         const query = dom.searchBar.value.toLowerCase();
         const activeMenuContent = document.querySelector('.menu-content.active');
         
         if (!activeMenuContent) {
-            // アクティブなメニューがない場合は何もしないか、全メニューを対象にするか検討
-            // 今回はカテゴリ切り替えが必須なので、基本的にはアクティブなものがある前提
             return; 
         }
 
         const currentCategory = activeMenuContent.id.replace('-menu', '');
         const filtered = menuItems.filter(item => 
-            item.category === currentCategory && // 現在のカテゴリのアイテムのみを対象
+            item.category === currentCategory && 
             (item.name_en.toLowerCase().includes(query) || 
              item.name_ja.toLowerCase().includes(query) || 
              item.name_id.toLowerCase().includes(query))
         );
         
-        // フィルタリングされたアイテムを、現在アクティブなカテゴリのグリッドにレンダリング
         renderMenu(filtered, `${currentCategory}-menu-grid`); 
     }
-    // ●↑この場所を変更してください
 
     function updateUIForAuthState(user, userData) {
         currentUserData = userData;
@@ -320,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listener Bindings ---
     const savedLang = localStorage.getItem('language') || 'en'; 
-    updateLanguage(savedLang); // ここでrenderAllCategoryMenusが呼ばれます
+    updateLanguage(savedLang); 
         
     if(auth) {
         onAuthStateChanged(auth, async (user) => { if (user) { currentUser = user; const userDoc = await getDoc(doc(db, "users", user.uid)); updateUIForAuthState(user, userDoc.exists() ? userDoc.data() : null); } else { currentUser = null; updateUIForAuthState(null); } });
@@ -334,10 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
         [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); }));
     }
         
-    // ●↓この場所を変更してください：addToCart イベントリスナー
-    // dom.menuList.addEventListener('click', addToCart); // 古い行を削除またはコメントアウト
-    dom.menuDisplayArea.addEventListener('click', addToCart); // メニューコンテンツの親要素にイベント委譲
-    // ●↑この場所を変更してください
+    dom.menuDisplayArea.addEventListener('click', addToCart); 
 
     [dom.languageSwitcher, dom.languageSwitcherMobile].forEach(switcher => switcher.addEventListener('click', (e) => { const lang = e.target.closest('.lang-btn')?.dataset.lang; if(lang) updateLanguage(lang); }));
     document.getElementById('close-signup-modal-button').addEventListener('click', () => closeAuthModal('signup-modal'));
@@ -360,39 +345,32 @@ document.addEventListener('DOMContentLoaded', () => {
     { isCouponApplied = true; updateCart(); });
     startHeroSlideshow();
 
-    // ●↓この場所を追加してください：メニューカテゴリ切り替え機能のイベントリスナー
+    // メニューカテゴリ切り替え機能のイベントリスナー
     dom.menuButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // すべてのメニューコンテンツを非表示にし、アクティブクラスを削除
             document.querySelectorAll('.menu-content').forEach(content => {
-                content.classList.add('hidden'); // Tailwindのhiddenクラスを追加して非表示にする
+                content.classList.add('hidden'); 
                 content.classList.remove('active');
             });
             
-            // すべてのメニューボタンからアクティブスタイルを削除
-            dom.menuButtons.forEach(btn => btn.classList.remove('active-menu-button'));
+            document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active-menu-button'));
 
-            // クリックされたボタンに対応するメニューを表示
-            const targetMenuCategory = button.dataset.menu; // data-menu属性からカテゴリ名を取得
+            const targetMenuCategory = button.dataset.menu; 
             const targetMenuElement = document.getElementById(`${targetMenuCategory}-menu`);
             if (targetMenuElement) {
-                targetMenuElement.classList.remove('hidden'); // hiddenクラスを削除して表示する
-                targetMenuElement.classList.add('active'); // アクティブクラスを追加
+                targetMenuElement.classList.remove('hidden'); 
+                targetMenuElement.classList.add('active'); 
             }
             
-            // クリックされたボタンにアクティブスタイルを追加
             button.classList.add('active-menu-button');
             
-            // 検索バーの内容をクリアし、現在のカテゴリのメニューを再描画（フィルタリング解除）
             dom.searchBar.value = '';
-            filterMenu(); // 選択されたカテゴリのメニューを再フィルタリング（全表示状態）
+            filterMenu(); 
         });
     });
 
-    // ●↓この場所を追加してください：ページロード時の初期表示として「日本料理」をアクティブにする
     const initialButton = document.querySelector('.menu-button[data-menu="japanese"]');
     if (initialButton) {
-        initialButton.click(); // クリックイベントをトリガーして初期表示
+        initialButton.click(); 
     }
-    // ●↑この場所を追加してください
 });

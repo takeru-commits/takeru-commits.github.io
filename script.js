@@ -1,6 +1,6 @@
 // Firebase SDK Import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDoc, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"; // 'where' をインポート
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
     
 const firebaseConfig = {
@@ -14,7 +14,7 @@ const firebaseConfig = {
 };
 
 let db, auth;
-if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "rgKDs7T8tsdoDQigLLX2CkGprx62") {
     try { const app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); }
     catch (e) { console.error("Error initializing Firebase:", e); }
 }
@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         calendarGrid: document.getElementById('calendar-grid'),
         preorderStatus: document.getElementById('preorder-status'),
         cartButton: document.getElementById('cart-button'), mobileCartButton: document.getElementById('mobile-cart-button'), cartSidebar: document.getElementById('cart-sidebar'), closeCartButton: document.getElementById('close-cart-button'), cartItemsContainer: document.getElementById('cart-items'), cartTotalElement: document.getElementById('cart-total'), cartSubtotalElement: document.getElementById('cart-subtotal'), discountRow: document.getElementById('discount-row'), cartDiscountElement: document.getElementById('cart-discount'), couponSection: document.getElementById('coupon-section'), applyCouponButton: document.getElementById('apply-coupon-button'), cartCountElements: [document.getElementById('cart-count'), document.getElementById('mobile-cart-count')], emptyCartMessage: document.getElementById('empty-cart-message'), checkoutButton: document.getElementById('checkout-button'), checkoutModal: document.getElementById('checkout-modal'), closeCheckoutModalButton: document.getElementById('close-checkout-modal-button'), checkoutForm: document.getElementById('checkout-form'), checkoutTotalElement: document.getElementById('checkout-total'), formError: document.getElementById('form-error'), successModal: document.getElementById('success-modal'), closeSuccessModalButton: document.getElementById('close-success-modal-button'), adminPanelButton: document.getElementById('admin-panel-button'), adminModal: document.getElementById('admin-modal'), closeAdminModalButton: document.getElementById('close-admin-modal-button'), orderListContainer: document.getElementById('order-list'), authLinksDesktop: document.getElementById('auth-links-desktop'), userLinksDesktop: document.getElementById('user-links-desktop'), welcomeMessageDesktop: document.getElementById('welcome-message-desktop'), authLinksMobile: document.getElementById('auth-links-mobile'), userLinksMobile: document.getElementById('user-links-mobile'), welcomeMessageMobile: document.getElementById('welcome-message-mobile'), signupModal: document.getElementById('signup-modal'), loginModal: document.getElementById('login-modal'), accountModal: document.getElementById('account-modal'), languageSwitcher: document.getElementById('language-switcher'), languageSwitcherMobile: document.getElementById('language-switcher-mobile'), mobileMenu: document.getElementById('mobile-menu'), mobileMenuButton: document.getElementById('mobile-menu-button'), closeMobileMenuButton: document.getElementById('close-mobile-menu-button'), contactForm: document.getElementById('contact-form'), contactFormFeedback: document.getElementById('contact-form-feedback'), contactSubmitButton: document.getElementById('contact-submit-button'), myCouponsList: document.getElementById('my-coupons-list'),
+        myOrdersList: document.getElementById('my-orders-list'), // 新しくDOM要素を追加
         // メニューカテゴリ関連のDOM要素を追加
         menuButtons: document.querySelectorAll('.menu-button'),
         menuDisplayArea: document.getElementById('menu-display-area')
@@ -231,7 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = button.closest('.bg-white.rounded-lg.shadow-lg'); 
         const itemImage = card.querySelector('img');
         
-        // ★★★ ここから修正部分 ★★★
         // 現在表示されているカートアイコン（デスクトップ用またはモバイル用）を検出
         let cartIcon = null;
         if (dom.cartButton && dom.cartButton.offsetParent !== null) { // offsetParentがnullでない場合、要素が表示されている
@@ -272,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartIcon.classList.remove('cart-shake');
             }, 700);
         }
-        // ★★★ ここまで修正部分 ★★★
 
         const itemId = parseInt(button.dataset.itemId);
         const menuItem = menuItems.find(m => m.id === itemId);
@@ -298,11 +297,142 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeCart() { dom.cartSidebar.classList.add('translate-x-full'); }
     async function openCheckoutModal() { const total = cart.reduce((t, e) => t + e.price * e.quantity, 0); const emailInput = document.getElementById('customer-email'); dom.checkoutTotalElement.textContent = `¥${total.toLocaleString()}`; if (currentUser) { const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { const userData = userDoc.data(); document.getElementById('customer-name').value = userData.name || ''; document.getElementById('customer-phone').value = userData.phone || ''; document.getElementById('customer-address').value = userData.address || ''; } emailInput.value = currentUser.email; emailInput.readOnly = true; emailInput.classList.add('bg-gray-100', 'cursor-not-allowed'); } else { dom.checkoutForm.reset(); emailInput.readOnly = false; emailInput.classList.remove('bg-gray-100', 'cursor-not-allowed'); } dom.checkoutModal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; setTimeout(() => document.getElementById('checkout-modal-content').classList.remove('scale-95'), 10); }
     function closeCheckoutModal() { document.getElementById('checkout-modal-content').classList.add('scale-95'); dom.checkoutModal.classList.add('hidden'); document.body.style.overflow = 'auto'; dom.formError.classList.add('hidden'); }
-    async function handleOrderSubmit(e) { e.preventDefault(); const confirmButton = document.getElementById('confirm-order-button'); if (!dom.checkoutForm.checkValidity()) { dom.formError.classList.remove('hidden'); return; } dom.formError.classList.add('hidden'); const originalButtonText = confirmButton.innerHTML; confirmButton.disabled = true; confirmButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); confirmButton.disabled = false; confirmButton.innerHTML = originalButtonText; return; } const formData = new FormData(dom.checkoutForm); const customerDetails = Object.fromEntries(formData.entries()); const orderItems = cart.map(item => ({ name: item.name_en, quantity: item.quantity, price: item.price })); const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0); const discount = isCouponApplied && currentUserData?.hasCoupon ? 100 : 0; const orderTotal = subtotal - discount; const orderData = { customerInfo: customerDetails, items: orderItems, subtotal: subtotal, discount: discount, total: orderTotal, createdAt: serverTimestamp(), userId: currentUser ? currentUser.uid : 'guest' }; if (selectedPreOrder.date) { orderData.preOrderInfo = selectedPreOrder; } try { const saveDataPromise = addDoc(collection(db, "orders"), orderData); const minDelayPromise = new Promise(resolve => setTimeout(resolve, 2000)); await Promise.all([saveDataPromise, minDelayPromise]); if (isCouponApplied && currentUser) { await setDoc(doc(db, "users", currentUser.uid), { hasCoupon: false }, { merge: true }); currentUserData.hasCoupon = false; } closeCheckoutModal(); showSuccessModal(); closeCart(); cart = []; selectedPreOrder = { date: null, city: null }; isCouponApplied = false; dom.preorderStatus.textContent = ''; document.querySelectorAll('.calendar-day.selected').forEach(d => d.classList.remove('selected')); updateCart(); dom.checkoutForm.reset(); } catch (err) { console.error("Error saving order: ", err); alert(translations[currentLang].orderError); } finally { confirmButton.disabled = false; confirmButton.innerHTML = originalButtonText; } }
+    async function handleOrderSubmit(e) { 
+        e.preventDefault(); 
+        const confirmButton = document.getElementById('confirm-order-button'); 
+        if (!dom.checkoutForm.checkValidity()) { 
+            dom.formError.classList.remove('hidden'); 
+            return; 
+        } 
+        dom.formError.classList.add('hidden'); 
+        const originalButtonText = confirmButton.innerHTML; 
+        confirmButton.disabled = true; 
+        confirmButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; 
+        
+        if (!db) { 
+            alert(translations[currentLang].dbError); 
+            confirmButton.disabled = false; 
+            confirmButton.innerHTML = originalButtonText; 
+            return; 
+        } 
+        
+        const formData = new FormData(dom.checkoutForm); 
+        const customerDetails = Object.fromEntries(formData.entries()); 
+        const orderItems = cart.map(item => ({ 
+            name: item[`name_${currentLang}`] || item.name_en, // 注文時の言語で保存
+            quantity: item.quantity, 
+            price: item.price 
+        })); 
+        const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0); 
+        const discount = isCouponApplied && currentUserData?.hasCoupon ? 100 : 0; 
+        const orderTotal = subtotal - discount; 
+        
+        const orderData = { 
+            customerInfo: customerDetails, 
+            items: orderItems, 
+            subtotal: subtotal, 
+            discount: discount, 
+            total: orderTotal, 
+            createdAt: serverTimestamp(), 
+            userId: currentUser ? currentUser.uid : 'guest' 
+        }; 
+        if (selectedPreOrder.date) { 
+            orderData.preOrderInfo = selectedPreOrder; 
+        } 
+        try { 
+            const saveDataPromise = addDoc(collection(db, "orders"), orderData); 
+            const minDelayPromise = new Promise(resolve => setTimeout(resolve, 2000)); 
+            await Promise.all([saveDataPromise, minDelayPromise]); 
+            
+            if (isCouponApplied && currentUser) { 
+                await setDoc(doc(db, "users", currentUser.uid), { hasCoupon: false }, { merge: true }); 
+                currentUserData.hasCoupon = false; 
+            } 
+            
+            closeCheckoutModal(); 
+            showSuccessModal(); 
+            closeCart(); 
+            cart = []; 
+            selectedPreOrder = { date: null, city: null }; 
+            isCouponApplied = false; 
+            dom.preorderStatus.textContent = ''; 
+            document.querySelectorAll('.calendar-day.selected').forEach(d => d.classList.remove('selected')); 
+            updateCart(); 
+            dom.checkoutForm.reset(); 
+        } catch (err) { 
+            console.error("Error saving order: ", err); 
+            alert(translations[currentLang].orderError); 
+        } finally { 
+            confirmButton.disabled = false; 
+            confirmButton.innerHTML = originalButtonText; 
+        } 
+    }
     async function handleContactSubmit(e) { e.preventDefault(); const submitButton = dom.contactSubmitButton; if (!dom.contactForm.checkValidity()) { return; } const originalButtonText = submitButton.innerHTML; submitButton.disabled = true; submitButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); submitButton.disabled = false; submitButton.innerHTML = originalButtonText; return; } const name = document.getElementById('contact-name').value; const email = document.getElementById('contact-email').value; const message = document.getElementById('contact-message').value; try { await addDoc(collection(db, "inquiries"), { name, email, message, createdAt: serverTimestamp() }); dom.contactFormFeedback.textContent = translations[currentLang].messageSuccess; dom.contactFormFeedback.classList.remove('text-red-500'); dom.contactFormFeedback.classList.add('text-green-600'); dom.contactForm.reset(); } catch (err) { console.error("Error saving inquiry: ", err); dom.contactFormFeedback.textContent = translations[currentLang].orderError; dom.contactFormFeedback.classList.add('text-red-500'); dom.contactFormFeedback.classList.remove('text-green-600'); } finally { setTimeout(() => { dom.contactFormFeedback.textContent = ''; submitButton.disabled = false; submitButton.innerHTML = originalButtonText; }, 4000); } }
     function showSuccessModal() { dom.successModal.classList.remove('hidden'); }
     function closeSuccessModal() { dom.successModal.classList.add('hidden'); }
         
+    // --- ユーザーの注文履歴をロードする関数 ---
+    async function loadUserOrders(userId) {
+        if (!db || !userId) {
+            dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noOrders || 'No orders found.'}</p>`;
+            return;
+        }
+
+        try {
+            // Firestoreから現在のユーザーの注文を取得 (createdAtで降順ソート)
+            const q = query(collection(db, "orders"), where("userId", "==", userId), orderBy("createdAt", "desc"));
+            
+            // リアルタイムリスナーではなく、一度だけデータを取得
+            const querySnapshot = await getDocs(q); // getDocsを使うように変更
+
+            if (querySnapshot.empty) {
+                dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noOrders || 'You have no orders yet.'}</p>`;
+                return;
+            }
+
+            let ordersHtml = '';
+            querySnapshot.forEach(doc => {
+                const order = doc.data();
+                const orderId = doc.id;
+                const orderDate = order.createdAt ? order.createdAt.toDate().toLocaleString(currentLang) : 'N/A';
+                const total = order.total.toLocaleString();
+
+                const itemsHtml = order.items.map(item => `
+                    <li class="flex justify-between text-sm text-gray-600">
+                        <span>${item.name} x ${item.quantity}</span>
+                        <span>¥${item.price.toLocaleString()}</span>
+                    </li>
+                `).join('');
+
+                ordersHtml += `
+                    <div class="border p-4 rounded-lg shadow-sm bg-gray-50">
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="font-semibold text-gray-700">${translations[currentLang].orderId || 'Order ID'}: ${orderId}</p>
+                            <p class="text-sm text-gray-500">${orderDate}</p>
+                        </div>
+                        <ul class="list-none p-0 m-0 space-y-1">
+                            ${itemsHtml}
+                        </ul>
+                        <div class="flex justify-between items-center border-t pt-2 mt-2">
+                            <span class="font-bold text-gray-800">${translations[currentLang].cartTotal || 'Total'}:</span>
+                            <span class="font-bold text-green-600">¥${total}</span>
+                        </div>
+                        ${order.preOrderInfo ? `
+                            <p class="text-xs text-blue-600 mt-2">
+                                ${translations[currentLang].preorderInfo || 'Pre-order'}: ${order.preOrderInfo.date} (${order.preOrderInfo.city})
+                            </p>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            dom.myOrdersList.innerHTML = ordersHtml;
+
+        } catch (error) {
+            console.error("Error loading user orders:", error);
+            dom.myOrdersList.innerHTML = `<p class="text-red-500 text-sm">${translations[currentLang].orderLoadError || 'Failed to load orders.'}</p>`;
+        }
+    }
+
     function openAdminPanel() {
         // ★★★★★【重要】この行のUIDを、あなた自身の管理者アカウントのUIDに必ず書き換えてください！
         const adminUID = 'rgKDs7T8tsdoDQigLLX2CkGprx62';
@@ -311,14 +441,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!db) { alert("Database connection error."); return; }
             dom.adminModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            loadOrders();
+            loadOrders(); // 管理者パネルの注文履歴は引き続き loadOrders で表示
         } else {
             alert("管理者権限がありません。");
         }
     }
 
     function closeAdminPanel() { dom.adminModal.classList.add('hidden'); document.body.style.overflow = 'auto'; }
-    function loadOrders() { if (!db) return; const t = query(collection(db, "orders"), orderBy("createdAt", "desc")); onSnapshot(t, t => { if (t.empty) { dom.orderListContainer.innerHTML = '<p class="text-center text-gray-500">No orders yet.</p>'; return; } dom.orderListContainer.innerHTML = ''; t.forEach(t => { const e = t.data(), a = document.createElement('div'); a.className = "bg-white p-4 rounded-lg shadow mb-4"; const n = e.items.map(t => `<li>${t.name} (x${t.quantity}) - ¥${(t.price * t.quantity).toLocaleString()}</li>`).join(''); let s = ''; e.preOrderInfo && (s = `<div class="mt-2 p-2 bg-green-100 rounded-md"><p class="font-semibold text-green-800">Pre-Order: ${e.preOrderInfo.date} (for ${e.preOrderInfo.city})</p></div>`); a.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-bold text-lg">Order ID: ${t.id}</p> <p class="text-sm text-gray-500">Date: ${e.createdAt ? e.createdAt.toDate().toLocaleString("en-US") : 'N/A'}</p> </div> <p class="font-bold text-xl text-green-600">Total: ¥${e.total.toLocaleString()}</p> </div> ${s} <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Customer Info:</h4> <p><strong>Name:</strong> ${e.customerInfo.name}</p> <p><strong>Phone:</strong> ${e.customerInfo.phone}</p> <p><strong>Email:</strong> ${e.customerInfo.email}</p> <p><strong>Address:</strong> ${e.customerInfo.address}</p> </div> <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Order Details:</h4> <ul class="list-disc list-inside">${n}</ul> </div> `; dom.orderListContainer.appendChild(a); }); }); }
+    // 注意: この loadOrders 関数は管理者パネル用です。ユーザーのマイアカウントの注文履歴には loadUserOrders を使います。
+    function loadOrders() { if (!db) return; const t = query(collection(db, "orders"), orderBy("createdAt", "desc")); onSnapshot(t, t => { if (t.empty) { dom.orderListContainer.innerHTML = '<p class="text-center text-gray-500">No orders yet.</p>'; return; } dom.orderListContainer.innerHTML = ''; t.forEach(t => { const e = t.data(), a = document.createElement('div'); a.className = "bg-white p-4 rounded-lg shadow mb-4"; const n = e.items.map(item => `<li>${item.name} (x${item.quantity}) - ¥${(item.price * item.quantity).toLocaleString()}</li>`).join(''); let s = ''; e.preOrderInfo && (s = `<div class="mt-2 p-2 bg-green-100 rounded-md"><p class="font-semibold text-green-800">Pre-Order: ${e.preOrderInfo.date} (for ${e.preOrderInfo.city})</p></div>`); a.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-bold text-lg">Order ID: ${t.id}</p> <p class="text-sm text-gray-500">Date: ${e.createdAt ? e.createdAt.toDate().toLocaleString("en-US") : 'N/A'}</p> </div> <p class="font-bold text-xl text-green-600">Total: ¥${e.total.toLocaleString()}</p> </div> ${s} <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Customer Info:</h4> <p><strong>Name:</strong> ${e.customerInfo.name}</p> <p><strong>Phone:</strong> ${e.customerInfo.phone}</p> <p><strong>Email:</strong> ${e.customerInfo.email}</p> <p><strong>Address:</strong> ${e.customerInfo.address}</p> </div> <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Order Details:</h4> <ul class="list-disc list-inside">${n}</ul> </div> `; dom.orderListContainer.appendChild(a); }); }); }
         
     function filterMenu() {
         const query = dom.searchBar.value.toLowerCase();
@@ -349,9 +480,13 @@ document.addEventListener('DOMContentLoaded', () => {
             [dom.userLinksDesktop, dom.userLinksMobile].forEach(el => el.classList.remove('hidden'));
             dom.welcomeMessageDesktop.textContent = welcomeText;
             dom.welcomeMessageMobile.textContent = welcomeText;
+            // ログイン時にマイアカウントの注文履歴をロード
+            loadUserOrders(user.uid); 
         } else {
             [dom.authLinksDesktop, dom.authLinksMobile].forEach(el => el.classList.remove('hidden'));
             [dom.userLinksDesktop, dom.userLinksMobile].forEach(el => el.classList.add('hidden'));
+            // ログアウト時に注文履歴をクリア
+            if (dom.myOrdersList) dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].loginToSeeOrders || 'Log in to see your orders.'}</p>`;
         }
         updateCart();
     }
@@ -392,13 +527,47 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLanguage(savedLang); 
         
     if(auth) {
-        onAuthStateChanged(auth, async (user) => { if (user) { currentUser = user; const userDoc = await getDoc(doc(db, "users", user.uid)); updateUIForAuthState(user, userDoc.exists() ? userDoc.data() : null); } else { currentUser = null; updateUIForAuthState(null); } });
+        onAuthStateChanged(auth, async (user) => { 
+            if (user) { 
+                currentUser = user; 
+                const userDoc = await getDoc(doc(db, "users", user.uid)); 
+                updateUIForAuthState(user, userDoc.exists() ? userDoc.data() : null); 
+                // ここで loadUserOrders を呼び出すことで、ユーザー情報がロードされた後に履歴が読み込まれる
+                loadUserOrders(user.uid); 
+            } else { 
+                currentUser = null; 
+                updateUIForAuthState(null); 
+            } 
+        });
         document.getElementById('signup-form').addEventListener('submit', async (e) => { e.preventDefault(); const name = e.target['signup-name'].value; const email = e.target['signup-email'].value; const password = e.target['signup-password'].value; try { const userCredential = await createUserWithEmailAndPassword(auth, email, password); await sendEmailVerification(userCredential.user); await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, phone: '', address: '', hasCoupon: true }); closeAuthModal('signup-modal'); } catch (error) { showAuthError('signup', error.message); } });
         document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const email = e.target['login-email'].value; const password = e.target['login-password'].value; try { await signInWithEmailAndPassword(auth, email, password); closeAuthModal('login-modal'); } catch (error) { showAuthError('login', error.message); } });
         document.getElementById('account-form').addEventListener('submit', async (e) => { e.preventDefault(); if (!currentUser) return; const name = e.target['account-name'].value; const phone = e.target['account-phone'].value; const address = e.target['account-address'].value; try { await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); const successMsg = document.getElementById('account-success'); successMsg.classList.remove('hidden'); setTimeout(() => successMsg.classList.add('hidden'), 3000); } catch (error) { showAuthError('account', error.message); } });
             
         [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); }));
-        [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { if (!currentUser) return; dom.mobileMenu.classList.add('hidden'); const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { currentUserData = userDoc.data(); } else { currentUserData = { name: '', phone: '', address: '', hasCoupon: false }; } document.getElementById('account-name').value = currentUserData.name || ''; document.getElementById('account-phone').value = currentUserData.phone || ''; document.getElementById('account-address').value = currentUserData.address || ''; const couponList = dom.myCouponsList; couponList.innerHTML = ''; if (currentUserData && currentUserData.hasCoupon) { couponList.innerHTML = `<div class="bg-orange-100 border border-orange-200 text-orange-800 text-sm rounded-lg p-3 flex items-center"><i class="fas fa-ticket-alt mr-3"></i><span>${translations[currentLang].welcomeCoupon}</span></div>`; } else { couponList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noCoupons}</p>`; } openAuthModal('account-modal'); }));
+        [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { 
+            if (!currentUser) return; 
+            dom.mobileMenu.classList.add('hidden'); 
+            const userDoc = await getDoc(doc(db, "users", currentUser.uid)); 
+            if (userDoc.exists()) { 
+                currentUserData = userDoc.data(); 
+            } else { 
+                currentUserData = { name: '', phone: '', address: '', hasCoupon: false }; 
+            } 
+            document.getElementById('account-name').value = currentUserData.name || ''; 
+            document.getElementById('account-phone').value = currentUserData.phone || ''; 
+            document.getElementById('account-address').value = currentUserData.address || ''; 
+            const couponList = dom.myCouponsList; 
+            couponList.innerHTML = ''; 
+            if (currentUserData && currentUserData.hasCoupon) { 
+                couponList.innerHTML = `<div class="bg-orange-100 border border-orange-200 text-orange-800 text-sm rounded-lg p-3 flex items-center"><i class="fas fa-ticket-alt mr-3"></i><span>${translations[currentLang].welcomeCoupon}</span></div>`; 
+            } else { 
+                couponList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noCoupons}</p>`; 
+            } 
+            
+            // マイアカウントを開くときに注文履歴をロードする
+            await loadUserOrders(currentUser.uid); // ここで await を追加して、確実に読み込みが終わるまで待つ
+            openAuthModal('account-modal'); 
+        }));
         [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); }));
         [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); }));
     }

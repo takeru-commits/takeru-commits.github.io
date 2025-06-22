@@ -49,7 +49,6 @@ let isCouponApplied = false;
 // --- App Initialization & Main Logic ---
 document.addEventListener('DOMContentLoaded', () => {
     const dom = { 
-        // menuList: document.getElementById('menu-list'), // このIDはHTMLから削除されるため、不要になります
         searchBar: document.getElementById('search-bar'),
         calendarGrid: document.getElementById('calendar-grid'),
         preorderStatus: document.getElementById('preorder-status'),
@@ -348,12 +347,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // メニューカテゴリ切り替え機能のイベントリスナー
     dom.menuButtons.forEach(button => {
         button.addEventListener('click', () => {
+            // すべてのメニューコンテンツを非表示にし、アクティブクラスを削除
             document.querySelectorAll('.menu-content').forEach(content => {
                 content.classList.add('hidden'); 
                 content.classList.remove('active');
             });
             
-            document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active-menu-button'));
+            // すべてのメニューボタンから、共通のactive-menu-buttonクラスと
+            // 各カテゴリの色を制御するクラスを削除します
+            dom.menuButtons.forEach(btn => {
+                btn.classList.remove('active-menu-button'); // 既存の共通アクティブクラスを削除
+                btn.classList.remove('japanese-active', 'indonesian-active', 'sweets-active', 'drinks-active'); // 各カテゴリの色クラスも削除
+            });
 
             const targetMenuCategory = button.dataset.menu; 
             const targetMenuElement = document.getElementById(`${targetMenuCategory}-menu`);
@@ -362,7 +367,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetMenuElement.classList.add('active'); 
             }
             
-            button.classList.add('active-menu-button');
+            // クリックされたボタンに、共通のアクティブクラスと、カテゴリ固有の色クラスを追加します
+            button.classList.add('active-menu-button', `${targetMenuCategory}-active`); 
             
             dom.searchBar.value = '';
             filterMenu(); 

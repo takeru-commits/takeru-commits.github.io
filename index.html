@@ -1,255 +1,145 @@
-// Firebase SDK Import
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamaguchi Halal Eats - Halal Food Delivery in Yamaguchi</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="style.css">
     
-    const firebaseConfig = {
-        apiKey: "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y",
-        authDomain: "yamaguchi-halal-eats.firebaseapp.com",
-        projectId: "yamaguchi-halal-eats",
-        storageBucket: "yamaguchi-halal-eats.appspot.com",
-        messagingSenderId: "471358397224",
-        appId: "1:471358397224:web:46184a676f2b9b23860e1d",
-        measurementId: "G-XKK7QMMWWN"
-    };
+</head>
+<body class="bg-gray-50">
 
-    let db, auth;
-    if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
-      try { const app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); }
-      catch (e) { console.error("Error initializing Firebase:", e); }
-    }
-    
-    // --- Translations & Data ---
-    const translations = {
-        en: { homeLink: "Home", menuLink: "Our Menu", howToOrderLink: "How to Order", aboutUsLink: "About Us", contactLink: "Contact", calendarLink: "Calendar", loginBtn: "Log In", signupBtn: "Sign Up", myAccountBtn: '<i class="fas fa-user-circle mr-1"></i>My Account', logoutBtn: '<i class="fas fa-sign-out-alt mr-1"></i>Log Out', heroTitle: "Authentic Halal Cuisine, Delivered to Your Door.", heroSubtitle: "We deliver our original Halal dishes with care, anywhere in Yamaguchi Prefecture.", searchPlaceholder: "Search for our dishes...", calendarTitle: "Pre-Order Calendar ({month})", calendarDesc: "Click a date on the calendar to select a pre-order day.<br>Only residents of the listed city can pre-order on that day.", menuTitle: "Our Signature Menu", addBtn: "Add", addedBtn: "Added", howToOrderTitle: "How to Order", step1Title: "1. Choose", step1Desc: "Select your favorite dishes from our menu.", step2Title: "2. Checkout", step2Desc: "Enter your details and confirm your order.", step3Title: "3. Enjoy", step3Desc: "Your delicious meal will be delivered to you.", aboutTitle: "About Us", historyTitle: "Our History", historyDesc: "This service was started by a Japanese and an Indonesian living together in Yamaguchi Prefecture. Our mission is to deliver authentic, delicious, and worry-free Halal meals to everyone who needs them in our community. We pour our hearts into every dish, hoping to bring you the comforting taste of home.", contactTitle: "Contact Us", messageLabel: "Message", sendMessageBtn: "Send Message", messageSuccess: "Thank you! Your message has been sent.", footerRights: "&copy; 2025 Yamaguchi Halal Eats. All Rights Reserved.", adminPanelBtn: "Admin Panel", cartTitle: "Shopping Cart", cartEmpty: "Your cart is empty.", cartTotal: "Total:", checkoutBtn: "Checkout", checkoutModalTitle: "Confirm Your Order", yourInfoTitle: "Your Information", nameLabel: "Full Name", phoneLabel: "Phone Number", emailLabel: "Email Address", addressLabel: "Delivery Address", addressNote: "Please enter your home address only. Delivery to public institutions is not available.", formError: "Please fill in all fields.", totalPaymentLabel: "Total Payment:", confirmOrderBtn: "Confirm Order", thankYouTitle: "Thank You for Your Order!", thankYouDesc: "Your order has been successfully placed.", closeBtn: "Close", createAccountTitle: "Create Your Account", passwordLabel: "Password", loginTitle: "Log In to Your Account", myAccountTitle: "My Account", profileUpdateSuccess: "Profile updated successfully!", saveChangesBtn: "Save Changes", welcome: "Welcome", preorderYamaguchi: "Delivery for {date} is available for residents of Yamaguchi City. Please proceed with your order.", preorderUbe: "Delivery for {date} is available for residents of Ube City. Please proceed with your order.", dbError: "Database connection error. Order cannot be saved because Firebase is not configured.", orderError: "An error occurred while processing your order. Please try again.", passwordIncorrect: "Incorrect password.", signupBenefit: "Sign up to skip entering your delivery info every time & get a ¥100 coupon!", subtotalLabel: "Subtotal", discountLabel: "Coupon Discount", applyCouponBtn: "Apply ¥100 Coupon", couponApplied: "✓ Coupon Applied", myCoupons: "My Coupons", welcomeCoupon: "¥100 OFF Welcome Coupon", noCoupons: "You have no available coupons.", whatIsHalalTitle: "What is Halal Food?", whatIsHalalDesc: "Halal is an Arabic word that means 'permissible' according to Islamic law. For food to be certified as Halal, it must adhere to a strict set of rules regarding ingredients and preparation methods. This ensures that the food is clean, pure, and prepared in a humane way." },
-        ja: { homeLink: "ホーム", menuLink: "メニュー", howToOrderLink: "注文方法", aboutUsLink: "私たちについて", contactLink: "お問い合わせ", calendarLink: "カレンダー", loginBtn: "ログイン", signupBtn: "新規登録", myAccountBtn: '<i class="fas fa-user-circle mr-1"></i>アカウント', logoutBtn: '<i class="fas fa-sign-out-alt mr-1"></i>ログアウト', heroTitle: "本格ハラール料理を、ご自宅で。", heroSubtitle: "山口県内、どこへでも真心を込めてお届けします。", searchPlaceholder: "料理を検索...", calendarTitle: "事前注文カレンダー ({month})", calendarDesc: "カレンダーの日付をクリックして、事前注文日を選択してください。<br>記載された市にお住まいの方のみ、その日に事前注文が可能です。", menuTitle: "私たちの特製メニュー", addBtn: "追加", addedBtn: "追加済み", howToOrderTitle: "ご注文方法", step1Title: "1. 選ぶ", step1Desc: "メニューからお好きな料理をお選びください。", step2Title: "2. 注文", step2Desc: "お客様情報を入力し、注文を確定します。", step3Title: "3. 楽しむ", step3Desc: "美味しいお料理がご自宅に届きます。", aboutTitle: "私たちについて", historyTitle: "私たちの歩み", historyDesc: "このサービスは、山口県に住む日本人とインドネシア人の二人が始めました。私たちの使命は、本格的で美味しく、そして安心できるハラール料理を、地域の皆様にお届けすることです。一皿一皿に心を込めて、故郷の味をお届けします。", contactTitle: "お問い合わせ", messageLabel: "メッセージ", sendMessageBtn: "メッセージを送信", messageSuccess: "ありがとうございます。メッセージが送信されました。", footerRights: "&copy; 2025 やまぐちHalal Eats. All Rights Reserved.", adminPanelBtn: "管理者パネル", cartTitle: "ショッピングカート", cartEmpty: "カートは空です。", cartTotal: "合計:", checkoutBtn: "レジに進む", checkoutModalTitle: "ご注文の確認", yourInfoTitle: "お客様情報", nameLabel: "お名前", phoneLabel: "電話番号", emailLabel: "メールアドレス", addressLabel: "配達先住所", addressNote: "ご自宅の住所のみご記入ください。公共機関への配達はできません。", formError: "すべての項目を入力してください。", totalPaymentLabel: "お支払い合計:", confirmOrderBtn: "注文を確定する", thankYouTitle: "ご注文ありがとうございます！", thankYouDesc: "ご注文が正常に完了しました。", closeBtn: "閉じる", createAccountTitle: "アカウント作成", passwordLabel: "パスワード", loginTitle: "アカウントにログイン", myAccountTitle: "マイアカウント", profileUpdateSuccess: "プロフィールを更新しました！", saveChangesBtn: "変更を保存", welcome: "ようこそ", preorderYamaguchi: "【{date}】は【山口市】にお住まいの方の配達日です。このままご注文ください。", preorderUbe: "【{date}】は【宇部市】にお住まいの方の配達日です。このままご注文ください。", dbError: "データベース接続エラー。Firebaseが設定されていないため、注文を保存できません。", orderError: "注文処理中にエラーが発生しました。もう一度お試しください。", passwordIncorrect: "パスワードが違います。", signupBenefit: "会員登録をすると、毎回の配達先入力が不要になり、100円クーポンもご利用いただけます！", subtotalLabel: "小計", discountLabel: "クーポン割引", applyCouponBtn: "100円クーポンを使う", couponApplied: "✓ クーポン適用済み", myCoupons: "マイクーポン", welcomeCoupon: "100円OFF ウェルカムクーポン", noCoupons: "利用可能なクーポンはありません。", whatIsHalalTitle: "ハラールフードとは？", whatIsHalalDesc: "ハラールとは、アラビア語で「（イスラムの教えにおいて）許されている」という意味の言葉です。ハラールフードとして認証されるためには、食材や調理法に関して厳格な基準を守る必要があります。これにより、食品が清潔で純粋であり、人道的な方法で調理されていることが保証されます。" },
-        id: { homeLink: "Beranda", menuLink: "Menu Kami", howToOrderLink: "Cara Pesan", aboutUsLink: "Tentang Kami", contactLink: "Kontak", calendarLink: "Kalender", loginBtn: "Masuk", signupBtn: "Daftar", myAccountBtn: '<i class="fas fa-user-circle mr-1"></i>Akun Saya', logoutBtn: '<i class="fas fa-sign-out-alt mr-1"></i>Keluar', heroTitle: "Masakan Halal Otentik, Diantar ke Pintu Anda.", heroSubtitle: "Kami mengantarkan hidangan Halal asli kami dengan hati-hati, ke mana saja di Prefektur Yamaguchi.", searchPlaceholder: "Cari hidangan kami...", calendarTitle: "Kalender Pra-Pesan ({month})", calendarDesc: "Klik tanggal di kalender untuk memilih hari pra-pesan.<br>Hanya penduduk kota yang terdaftar yang dapat melakukan pra-pesan pada hari itu.", menuTitle: "Menu Andalan Kami", addBtn: "Tambah", addedBtn: "Ditambahkan", howToOrderTitle: "Cara Memesan", step1Title: "1. Pilih", step1Desc: "Pilih hidangan favorit Anda dari menu kami.", step2Title: "2. Bayar", step2Desc: "Masukkan data Anda dan konfirmasi pesanan Anda.", step3Title: "3. Nikmati", step3Desc: "Makanan lezat Anda akan diantarkan ke rumah Anda.", aboutTitle: "Tentang Kami", historyTitle: "Sejarah Kami", historyDesc: "Layanan ini dimulai oleh seorang Jepang dan seorang Indonesia yang tinggal bersama di Prefektur Yamaguchi. Misi kami adalah untuk mengantarkan makanan Halal yang otentik, lezat, dan tanpa rasa khawatir kepada semua orang yang membutuhkannya di komunitas kami. Kami mencurahkan hati kami ke dalam setiap hidangan, dengan harapan dapat memberikan Anda rasa nyaman seperti di rumah sendiri.", contactTitle: "Hubungi Kami", messageLabel: "Pesan", sendMessageBtn: "Kirim Pesan", messageSuccess: "Terima kasih! Pesan Anda telah terkirim.", footerRights: "&copy; 2025 Yamaguchi Halal Eats. Semua Hak Dilindungi.", adminPanelBtn: "Panel Admin", cartTitle: "Keranjang Belanja", cartEmpty: "Keranjang Anda kosong.", cartTotal: "Total:", checkoutBtn: "Bayar", checkoutModalTitle: "Konfirmasi Pesanan Anda", yourInfoTitle: "Informasi Anda", nameLabel: "Nama Lengkap", phoneLabel: "Nomor Telepon", emailLabel: "Alamat Email", addressLabel: "Alamat Pengiriman", addressNote: "Harap masukkan alamat rumah Anda saja. Pengiriman ke institusi publik tidak tersedia.", formError: "Harap isi semua kolom.", totalPaymentLabel: "Total Pembayaran:", confirmOrderBtn: "Konfirmasi Pesanan", thankYouTitle: "Terima Kasih Atas Pesanan Anda!", thankYouDesc: "Pesanan Anda telah berhasil dilakukan.", closeBtn: "Tutup", createAccountTitle: "Buat Akun Anda", passwordLabel: "Kata Sandi", loginTitle: "Masuk ke Akun Anda", myAccountTitle: "Akun Saya", profileUpdateSuccess: "Profil berhasil diperbarui!", saveChangesBtn: "Simpan Perubahan", welcome: "Selamat Datang", preorderYamaguchi: "Pengiriman untuk {date} tersedia untuk penduduk Kota Yamaguchi. Silakan lanjutkan pesanan Anda.", preorderUbe: "Pengiriman untuk {date} tersedia untuk penduduk Kota Ube. Silakan lanjutkan pesanan Anda.", dbError: "Kesalahan koneksi database. Pesanan tidak dapat disimpan karena Firebase tidak dikonfigurasi.", orderError: "Terjadi kesalahan saat memproses pesanan Anda. Silakan coba lagi.", passwordIncorrect: "Kata sandi salah.", signupBenefit: "Daftar untuk melewati pengisian info pengiriman setiap saat & dapatkan kupon ¥100!", subtotalLabel: "Subtotal", discountLabel: "Diskon Kupon", applyCouponBtn: "Gunakan Kupon ¥100", couponApplied: "✓ Kupon Digunakan", myCoupons: "Kupon Saya", welcomeCoupon: "Kupon Selamat Datang ¥100 OFF", noCoupons: "Anda tidak memiliki kupon yang tersedia.", whatIsHalalTitle: "Apa itu Makanan Halal?", whatIsHalalDesc: "Halal adalah kata dalam bahasa Arab yang berarti 'diperbolehkan' menurut hukum Islam. Agar makanan dapat disertifikasi sebagai Halal, makanan tersebut harus mematuhi serangkaian aturan ketat mengenai bahan dan metode persiapan. Ini memastikan bahwa makanan tersebut bersih, suci, dan disiapkan dengan cara yang manusiawi." }
-    };
-    const menuItems = [ { id: 1, name_en: "Halal Tonkotsu Ramen", name_ja: "ハラール豚骨ラーメン", name_id: "Ramen Tonkotsu Halal", price: 1250, description_en: "Our signature ramen with a rich, creamy pork-free broth, topped with chicken chashu, menma, and a seasoned egg.", description_ja: "当店自慢のラーメン。豚を使わない濃厚でクリーミーなスープに、鶏チャーシュー、メンマ、味玉をトッピングしました。", description_id: "Ramen andalan kami dengan kaldu kaya krim bebas babi, dengan topping chashu ayam, menma, dan telur berbumbu.", imageUrl: "http://googleusercontent.com/image_generation_content/1" }, { id: 2, name_en: "Nasi Goreng", name_ja: "ナシゴレン", name_id: "Nasi Goreng", price: 1100, description_en: "Classic Indonesian fried rice with sweet soy sauce, chicken, and a fried egg on top.", description_ja: "定番のインドネシア風チャーハン。甘い醤油と鶏肉で炒め、目玉焼きを乗せました。", description_id: "Nasi goreng klasik Indonesia dengan kecap manis, ayam, dan telur mata sapi di atasnya.", imageUrl: "https://images.unsplash.com/photo-1599602235011-95b62a773f77?q=80&w=2849&auto=format&fit=crop" }, { id: 3, name_en: "Chicken Satay (5 Skewers)", name_ja: "チキンサテー（5本）", name_id: "Sate Ayam (5 Tusuk)", price: 800, description_en: "Tender, marinated chicken skewers, grilled to perfection and served with a rich peanut sauce.", description_ja: "柔らかく味付けした鶏肉の串焼き。香ばしく焼き上げ、濃厚なピーナッツソースを添えて。", description_id: "Sate ayam empuk yang direndam bumbu, dipanggang sempurna dan disajikan dengan saus kacang yang kaya.", imageUrl: "https://images.unsplash.com/photo-1626084469318-26122a751593?q=80&w=2940&auto=format&fit=crop" }, { id: 4, name_en: "Beef Rendang", name_ja: "ビーフ・ルンダン", name_id: "Rendang Sapi", price: 1600, description_en: "Slow-cooked beef in a fragrant mixture of coconut milk and spices until tender and flavorful.", description_ja: "牛肉をココナッツミルクとスパイスで柔らかくなるまでじっくり煮込んだ、風味豊かな一品。", description_id: "Daging sapi yang dimasak perlahan dalam campuran santan dan rempah-rempah yang harum hingga empuk dan beraroma.", imageUrl: "https://images.unsplash.com/photo-1626084474384-5893557a5fb2?q=80&w=2940&auto=format&fit=crop" }, { id: 5, name_en: "Halal Gyoza (6 pcs)", name_ja: "ハラール餃子（6個）", name_id: "Gyoza Halal (6 buah)", price: 650, description_en: "Pan-fried dumplings filled with minced chicken and vegetables, served with a soy-vinegar dipping sauce.", description_ja: "鶏ひき肉と野菜を詰めた焼き餃子。酢醤油の特製だれでお召し上がりください。", description_id: "Pangsit goreng berisi ayam cincang dan sayuran, disajikan dengan saus celup cuka kedelai.", imageUrl: "https://images.unsplash.com/photo-1631783321568-9a35622fa22b?q=80&w=2787&auto=format&fit=crop" }, { id: 6, name_en: "Mango Lassi", name_ja: "マンゴーラッシー", name_id: "Lassi Mangga", price: 500, description_en: "A refreshing and creamy yogurt drink blended with sweet, ripe mangoes.", description_ja: "甘く熟したマンゴーをブレンドした、爽やかでクリーミーなヨーグルトドリンク。", description_id: "Minuman yogurt krim yang menyegarkan dicampur dengan mangga matang yang manis.", imageUrl: "https://images.unsplash.com/photo-1626803364123-0176e053d231?q=80&w=2787&auto=format&fit=crop" } ];
-    let cart = [];
-    let selectedPreOrder = { date: null, city: null };
-    let currentUser = null;
-    let currentUserData = null;
-    let currentLang = 'en';
-    let isCouponApplied = false;
-    
-    // --- App Initialization & Main Logic ---
-    document.addEventListener('DOMContentLoaded', () => {
-        const dom = { menuList: document.getElementById('menu-list'), searchBar: document.getElementById('search-bar'), calendarGrid: document.getElementById('calendar-grid'), preorderStatus: document.getElementById('preorder-status'), cartButton: document.getElementById('cart-button'), mobileCartButton: document.getElementById('mobile-cart-button'), cartSidebar: document.getElementById('cart-sidebar'), closeCartButton: document.getElementById('close-cart-button'), cartItemsContainer: document.getElementById('cart-items'), cartTotalElement: document.getElementById('cart-total'), cartSubtotalElement: document.getElementById('cart-subtotal'), discountRow: document.getElementById('discount-row'), cartDiscountElement: document.getElementById('cart-discount'), couponSection: document.getElementById('coupon-section'), applyCouponButton: document.getElementById('apply-coupon-button'), cartCountElements: [document.getElementById('cart-count'), document.getElementById('mobile-cart-count')], emptyCartMessage: document.getElementById('empty-cart-message'), checkoutButton: document.getElementById('checkout-button'), checkoutModal: document.getElementById('checkout-modal'), closeCheckoutModalButton: document.getElementById('close-checkout-modal-button'), checkoutForm: document.getElementById('checkout-form'), checkoutTotalElement: document.getElementById('checkout-total'), formError: document.getElementById('form-error'), successModal: document.getElementById('success-modal'), closeSuccessModalButton: document.getElementById('close-success-modal-button'), adminPanelButton: document.getElementById('admin-panel-button'), adminModal: document.getElementById('admin-modal'), closeAdminModalButton: document.getElementById('close-admin-modal-button'), orderListContainer: document.getElementById('order-list'), authLinksDesktop: document.getElementById('auth-links-desktop'), userLinksDesktop: document.getElementById('user-links-desktop'), welcomeMessageDesktop: document.getElementById('welcome-message-desktop'), authLinksMobile: document.getElementById('auth-links-mobile'), userLinksMobile: document.getElementById('user-links-mobile'), welcomeMessageMobile: document.getElementById('welcome-message-mobile'), signupModal: document.getElementById('signup-modal'), loginModal: document.getElementById('login-modal'), accountModal: document.getElementById('account-modal'), languageSwitcher: document.getElementById('language-switcher'), languageSwitcherMobile: document.getElementById('language-switcher-mobile'), mobileMenu: document.getElementById('mobile-menu'), mobileMenuButton: document.getElementById('mobile-menu-button'), closeMobileMenuButton: document.getElementById('close-mobile-menu-button'), contactForm: document.getElementById('contact-form'), contactFormFeedback: document.getElementById('contact-form-feedback'), contactSubmitButton: document.getElementById('contact-submit-button'), myCouponsList: document.getElementById('my-coupons-list') };
-        loadCartFromLocalStorage();
-
-        // --- Functions ---
-        function loadCartFromLocalStorage() {
-          const savedCart = localStorage.getItem('cart');
-          if (savedCart) {
-            try {
-              cart = JSON.parse(savedCart);
-            } catch (e) {
-              console.error("カート情報の復元に失敗しました: ", e);
-              cart = [];
-            }
-          }
-        }
-
-        function saveCartToLocalStorage() {
-          localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        const showAuthError = (modal, message) => { const errorEl = document.getElementById(`${modal}-error`); errorEl.textContent = message; errorEl.classList.remove('hidden'); };
-        const closeAuthModal = (modalId) => { const modal = document.getElementById(modalId); modal.classList.add('hidden'); modal.querySelector('.auth-modal-content').classList.add('scale-95'); document.body.style.overflow = 'auto'; };
-        const openAuthModal = (modalId) => { const modal = document.getElementById(modalId); modal.classList.remove('hidden'); setTimeout(() => modal.querySelector('.auth-modal-content').classList.remove('scale-95'), 10); document.body.style.overflow = 'hidden'; };
-        
-        function updateLanguage(lang) {
-            currentLang = lang;
-            document.documentElement.lang = lang;
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.dataset.key;
-                if (translations[lang][key]) {
-                    if (key === 'calendarTitle') {
-                        const today = new Date();
-                        const monthStr = new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'long' }).format(today);
-                        el.innerHTML = translations[lang][key].replace('{month}', monthStr);
-                    } else if (el.placeholder) {
-                        el.placeholder = translations[lang][key];
-                    } else {
-                        el.innerHTML = translations[lang][key];
-                    }
-                }
-            });
-
-            renderMenu(menuItems);
-            const today = new Date();
-            generateCalendar(today.getFullYear(), today.getMonth() + 1);
-            updateCart();
-            localStorage.setItem('language', lang);
-        }
-        
-        function generateCalendar(year, month) { dom.calendarGrid.innerHTML = ''; const monthIndex = month - 1; const firstDay = new Date(year, monthIndex, 1).getDay(); const daysInMonth = new Date(year, month, 0).getDate(); const weekDays = currentLang === 'ja' ? ['日', '月', '火', '水', '木', '金', '土'] : (currentLang === 'id' ? ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']); weekDays.forEach(day => { const dayHeader = document.createElement('div'); dayHeader.className = 'font-bold text-gray-700 p-2'; dayHeader.textContent = day; dom.calendarGrid.appendChild(dayHeader); }); for (let i = 0; i < firstDay; i++) { dom.calendarGrid.appendChild(document.createElement('div')); } for (let day = 1; day <= daysInMonth; day++) { const dayCell = document.createElement('div'); const date = new Date(year, monthIndex, day); const dayOfWeek = date.getDay(); dayCell.className = 'calendar-day p-2 rounded-lg border border-gray-200 flex flex-col justify-between h-24 sm:h-28'; let contentHTML = `<span class="font-bold">${day}</span>`; let city = null; let cityKey = ''; if (dayOfWeek === 6) { dayCell.classList.add('bg-blue-50', 'preorder-day'); city = 'Yamaguchi City'; cityKey = 'preorderYamaguchi'; } else if (dayOfWeek === 0) { dayCell.classList.add('bg-red-50', 'preorder-day'); city = 'Ube City'; cityKey = 'preorderUbe'; } else { dayCell.classList.add('bg-gray-50'); } dayCell.innerHTML = contentHTML + (city ? `<span class="text-sm font-semibold ${dayOfWeek === 6 ? 'text-blue-700' : 'text-red-700'} mt-auto">${city}</span>` : ''); if (city) { dayCell.addEventListener('click', () => { document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected')); dayCell.classList.add('selected'); const dateString = new Intl.DateTimeFormat(currentLang, { month: 'long', day: 'numeric' }).format(date); selectedPreOrder = { date: dateString, city: city }; dom.preorderStatus.textContent = translations[currentLang][cityKey].replace('{date}', dateString); }); } dom.calendarGrid.appendChild(dayCell); } }
-        function renderMenu(items) { dom.menuList.innerHTML = ''; if (items.length === 0) { dom.menuList.innerHTML = `<p class="text-gray-600 col-span-full text-center">No matching dishes found.</p>`; return; } items.forEach(item => { const card = document.createElement('div'); card.className = 'menu-card bg-white rounded-lg shadow-md overflow-hidden flex flex-col'; const name = item[`name_${currentLang}`] || item.name_en; const description = item[`description_${currentLang}`] || item.description_en; card.innerHTML = `<div class="h-48 overflow-hidden"><img src="${item.imageUrl}" alt="${name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=${encodeURIComponent(name)}';"></div><div class="p-4 flex flex-col flex-grow"><h3 class="text-xl font-bold mb-2">${name}</h3><p class="text-gray-600 mb-4 text-sm flex-grow">${description}</p><div class="flex justify-between items-center mt-auto"><p class="text-lg font-bold text-green-600">¥${item.price.toLocaleString()}</p><button data-item-id="${item.id}" class="add-to-cart-button bg-green-100 text-green-700 font-semibold px-4 py-2 rounded-lg hover:bg-green-200 transition"><i class="fas fa-plus mr-2"></i>${translations[currentLang].addBtn || 'Add'}</button></div></div>`; dom.menuList.appendChild(card); }); }
-        function addToCart(e) {
-            const button = e.target.closest('.add-to-cart-button');
-            if (!button) return;
-
-            const card = button.closest('.menu-card');
-            const itemImage = card.querySelector('img');
-            const cartIcon = document.getElementById('cart-button');
-
-            if (itemImage && cartIcon) {
-                const imageRect = itemImage.getBoundingClientRect();
-                const cartRect = cartIcon.getBoundingClientRect();
-                const flyingImage = itemImage.cloneNode();
-                flyingImage.classList.add('flying-image');
-                flyingImage.style.width = `${imageRect.width}px`;
-                flyingImage.style.height = `${imageRect.height}px`;
-                flyingImage.style.top = `${imageRect.top}px`;
-                flyingImage.style.left = `${imageRect.left}px`;
-                document.body.appendChild(flyingImage);
-
-                requestAnimationFrame(() => {
-                    flyingImage.style.width = '30px';
-                    flyingImage.style.height = '30px';
-                    flyingImage.style.top = `${cartRect.top + 10}px`;
-                    flyingImage.style.left = `${cartRect.left + 10}px`;
-                    flyingImage.style.opacity = '0';
-                });
-
-                cartIcon.classList.add('cart-shake');
-                setTimeout(() => {
-                    flyingImage.remove();
-                    cartIcon.classList.remove('cart-shake');
-                }, 700);
-            }
-
-            const itemId = parseInt(button.dataset.itemId);
-            const menuItem = menuItems.find(m => m.id === itemId);
-            const existingCartItem = cart.find(item => item.id === itemId);
-
-            if (existingCartItem) {
-                existingCartItem.quantity++;
-            } else {
-                cart.push({ ...menuItem, quantity: 1 });
-            }
-            updateCart();
-
-            button.innerHTML = `<i class="fas fa-check"></i> ${translations[currentLang].addedBtn || 'Added'}`;
-            button.classList.add("bg-green-500", "text-white");
-            setTimeout(() => {
-                button.innerHTML = `<i class="fas fa-plus mr-2"></i> ${translations[currentLang].addBtn || 'Add'}`;
-                button.classList.remove("bg-green-500", "text-white");
-            }, 1500);
-        }
-        function updateCart() { if (cart.length === 0) { dom.cartItemsContainer.innerHTML = ''; dom.emptyCartMessage.classList.remove('hidden'); dom.couponSection.classList.add('hidden'); } else { dom.emptyCartMessage.classList.add('hidden'); dom.cartItemsContainer.innerHTML = ''; cart.forEach(t => { const e = document.createElement('div'); e.className = 'flex justify-between items-center py-3 border-b'; e.innerHTML = `<div class="flex-grow"><p class="font-semibold">${t[`name_${currentLang}`] || t.name_en}</p><p class="text-sm text-gray-600">¥${t.price.toLocaleString()}</p></div><div class="flex items-center space-x-3"><button class="quantity-change-button text-gray-500" data-item-id="${t.id}" data-change="-1">-</button><span>${t.quantity}</span><button class="quantity-change-button text-gray-500" data-item-id="${t.id}" data-change="1">+</button></div><p class="w-20 text-right font-semibold">¥${(t.price * t.quantity).toLocaleString()}</p>`; dom.cartItemsContainer.appendChild(e); }); } updateCouponUI(); const subtotal = cart.reduce((t, e) => t + e.price * e.quantity, 0); const discount = isCouponApplied && currentUserData?.hasCoupon ? 100 : 0; const total = subtotal - discount; dom.cartSubtotalElement.textContent = `¥${subtotal.toLocaleString()}`; dom.cartDiscountElement.textContent = `- ¥${discount.toLocaleString()}`; dom.discountRow.classList.toggle('hidden', discount === 0); dom.cartTotalElement.textContent = `¥${total.toLocaleString()}`; const e = cart.reduce((t, e) => t + e.quantity, 0); dom.cartCountElements.forEach(t => { t.textContent = e; t.classList.toggle('hidden', e === 0); }); dom.checkoutButton.disabled = cart.length === 0; saveCartToLocalStorage(); }
-        function handleQuantityChange(e) { const t = e.target.closest('.quantity-change-button'); if (!t) return; const a = parseInt(t.dataset.itemId), n = parseInt(t.dataset.change), s = cart.findIndex(t => t.id === a); s > -1 && (cart[s].quantity += n, cart[s].quantity <= 0 && cart.splice(s, 1)); isCouponApplied = false; updateCart(); }
-        function openCart() { dom.cartSidebar.classList.remove('translate-x-full'); }
-        function closeCart() { dom.cartSidebar.classList.add('translate-x-full'); }
-        async function openCheckoutModal() { const total = cart.reduce((t, e) => t + e.price * e.quantity, 0); const emailInput = document.getElementById('customer-email'); dom.checkoutTotalElement.textContent = `¥${total.toLocaleString()}`; if (currentUser) { const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { const userData = userDoc.data(); document.getElementById('customer-name').value = userData.name || ''; document.getElementById('customer-phone').value = userData.phone || ''; document.getElementById('customer-address').value = userData.address || ''; } emailInput.value = currentUser.email; emailInput.readOnly = true; emailInput.classList.add('bg-gray-100', 'cursor-not-allowed'); } else { dom.checkoutForm.reset(); emailInput.readOnly = false; emailInput.classList.remove('bg-gray-100', 'cursor-not-allowed'); } dom.checkoutModal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; setTimeout(() => document.getElementById('checkout-modal-content').classList.remove('scale-95'), 10); }
-        function closeCheckoutModal() { document.getElementById('checkout-modal-content').classList.add('scale-95'); dom.checkoutModal.classList.add('hidden'); document.body.style.overflow = 'auto'; dom.formError.classList.add('hidden'); }
-        async function handleOrderSubmit(e) { e.preventDefault(); const confirmButton = document.getElementById('confirm-order-button'); if (!dom.checkoutForm.checkValidity()) { dom.formError.classList.remove('hidden'); return; } dom.formError.classList.add('hidden'); const originalButtonText = confirmButton.innerHTML; confirmButton.disabled = true; confirmButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); confirmButton.disabled = false; confirmButton.innerHTML = originalButtonText; return; } const formData = new FormData(dom.checkoutForm); const customerDetails = Object.fromEntries(formData.entries()); const orderItems = cart.map(item => ({ name: item.name_en, quantity: item.quantity, price: item.price })); const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0); const discount = isCouponApplied && currentUserData?.hasCoupon ? 100 : 0; const orderTotal = subtotal - discount; const orderData = { customerInfo: customerDetails, items: orderItems, subtotal: subtotal, discount: discount, total: orderTotal, createdAt: serverTimestamp(), userId: currentUser ? currentUser.uid : 'guest' }; if (selectedPreOrder.date) { orderData.preOrderInfo = selectedPreOrder; } try { const saveDataPromise = addDoc(collection(db, "orders"), orderData); const minDelayPromise = new Promise(resolve => setTimeout(resolve, 2000)); await Promise.all([saveDataPromise, minDelayPromise]); if (isCouponApplied && currentUser) { await setDoc(doc(db, "users", currentUser.uid), { hasCoupon: false }, { merge: true }); currentUserData.hasCoupon = false; } closeCheckoutModal(); showSuccessModal(); closeCart(); cart = []; selectedPreOrder = { date: null, city: null }; isCouponApplied = false; dom.preorderStatus.textContent = ''; document.querySelectorAll('.calendar-day.selected').forEach(d => d.classList.remove('selected')); updateCart(); dom.checkoutForm.reset(); } catch (err) { console.error("Error saving order: ", err); alert(translations[currentLang].orderError); } finally { confirmButton.disabled = false; confirmButton.innerHTML = originalButtonText; } }
-        async function handleContactSubmit(e) { e.preventDefault(); const submitButton = dom.contactSubmitButton; if (!dom.contactForm.checkValidity()) { return; } const originalButtonText = submitButton.innerHTML; submitButton.disabled = true; submitButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); submitButton.disabled = false; submitButton.innerHTML = originalButtonText; return; } const name = document.getElementById('contact-name').value; const email = document.getElementById('contact-email').value; const message = document.getElementById('contact-message').value; try { await addDoc(collection(db, "inquiries"), { name, email, message, createdAt: serverTimestamp() }); dom.contactFormFeedback.textContent = translations[currentLang].messageSuccess; dom.contactFormFeedback.classList.remove('text-red-500'); dom.contactFormFeedback.classList.add('text-green-600'); dom.contactForm.reset(); } catch (err) { console.error("Error saving inquiry: ", err); dom.contactFormFeedback.textContent = translations[currentLang].orderError; dom.contactFormFeedback.classList.add('text-red-500'); dom.contactFormFeedback.classList.remove('text-green-600'); } finally { setTimeout(() => { dom.contactFormFeedback.textContent = ''; submitButton.disabled = false; submitButton.innerHTML = originalButtonText; }, 4000); } }
-        function showSuccessModal() { dom.successModal.classList.remove('hidden'); }
-        function closeSuccessModal() { dom.successModal.classList.add('hidden'); }
-        
-        function openAdminPanel() {
-            // ★★★★★【重要】この行のUIDを、あなた自身の管理者アカウントのUIDに必ず書き換えてください！
-            const adminUID = 'rgKDs7T8tsdoDQi';
-
-            if (currentUser && currentUser.uid === adminUID) {
-                if (!db) { alert("Database connection error."); return; }
-                dom.adminModal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-                loadOrders();
-            } else {
-                alert("管理者権限がありません。");
-            }
-        }
-
-        function closeAdminPanel() { dom.adminModal.classList.add('hidden'); document.body.style.overflow = 'auto'; }
-        function loadOrders() { if (!db) return; const t = query(collection(db, "orders"), orderBy("createdAt", "desc")); onSnapshot(t, t => { if (t.empty) { dom.orderListContainer.innerHTML = '<p class="text-center text-gray-500">No orders yet.</p>'; return; } dom.orderListContainer.innerHTML = ''; t.forEach(t => { const e = t.data(), a = document.createElement('div'); a.className = "bg-white p-4 rounded-lg shadow mb-4"; const n = e.items.map(t => `<li>${t.name} (x${t.quantity}) - ¥${(t.price * t.quantity).toLocaleString()}</li>`).join(''); let s = ''; e.preOrderInfo && (s = `<div class="mt-2 p-2 bg-green-100 rounded-md"><p class="font-semibold text-green-800">Pre-Order: ${e.preOrderInfo.date} (for ${e.preOrderInfo.city})</p></div>`); a.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-bold text-lg">Order ID: ${t.id}</p> <p class="text-sm text-gray-500">Date: ${e.createdAt ? e.createdAt.toDate().toLocaleString("en-US") : 'N/A'}</p> </div> <p class="font-bold text-xl text-green-600">Total: ¥${e.total.toLocaleString()}</p> </div> ${s} <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Customer Info:</h4> <p><strong>Name:</strong> ${e.customerInfo.name}</p> <p><strong>Phone:</strong> ${e.customerInfo.phone}</p> <p><strong>Email:</strong> ${e.customerInfo.email}</p> <p><strong>Address:</strong> ${e.customerInfo.address}</p> </div> <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Order Details:</h4> <ul class="list-disc list-inside">${n}</ul> </div> `; dom.orderListContainer.appendChild(a); }); }); }
-        function filterMenu() { const query = dom.searchBar.value.toLowerCase(); const filtered = menuItems.filter(item => (item.name_en.toLowerCase().includes(query) || item.name_ja.toLowerCase().includes(query) || item.name_id.toLowerCase().includes(query))); renderMenu(filtered); }
-        function updateUIForAuthState(user, userData) {
-            currentUserData = userData;
-            const name = userData ? userData.name : 'User';
-            const userName = name ? name.split(' ')[0] : 'User';
-            const welcomeText = `${translations[currentLang].welcome || 'Welcome'}, ${userName}!`;
-            if (user) {
-                [dom.authLinksDesktop, dom.authLinksMobile].forEach(el => el.classList.add('hidden'));
-                [dom.userLinksDesktop, dom.userLinksMobile].forEach(el => el.classList.remove('hidden'));
-                dom.welcomeMessageDesktop.textContent = welcomeText;
-                dom.welcomeMessageMobile.textContent = welcomeText;
-            } else {
-                [dom.authLinksDesktop, dom.authLinksMobile].forEach(el => el.classList.remove('hidden'));
-                [dom.userLinksDesktop, dom.userLinksMobile].forEach(el => el.classList.add('hidden'));
-            }
-            updateCart();
-        }
-        function updateCouponUI() {
-            if (currentUserData && currentUserData.hasCoupon) {
-                dom.couponSection.classList.remove('hidden');
-                dom.applyCouponButton.disabled = isCouponApplied;
-                dom.applyCouponButton.innerHTML = isCouponApplied ? `<i class="fas fa-check-circle mr-2"></i>${translations[currentLang].couponApplied}` : translations[currentLang].applyCouponBtn;
-            } else {
-                dom.couponSection.classList.add('hidden');
-            }
-        }
-
-        function startHeroSlideshow() {
-            const heroSection = document.querySelector('.hero-section');
-            if (!heroSection) return;
-
-            const slideshowImages = [
-                'ramen.png',
-                'salad.png',
-                'gyudon.png',
-                'lassi.png'
-            ];           
-            slideshowImages.forEach(src => {
-        const img = new Image();
-        img.src = src;
-    });
-            let currentImageIndex = 0;
-            heroSection.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${slideshowImages[currentImageIndex]}')`;
-
-            setInterval(() => {
-                currentImageIndex = (currentImageIndex + 1) % slideshowImages.length;
-                heroSection.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${slideshowImages[currentImageIndex]}')`;
-            }, 5000);
-        }
-
-        // --- Event Listener Bindings ---
-        const savedLang = localStorage.getItem('language') || 'en'; 
-        updateLanguage(savedLang);
-        
-        if(auth) {
-            onAuthStateChanged(auth, async (user) => { if (user) { currentUser = user; const userDoc = await getDoc(doc(db, "users", user.uid)); updateUIForAuthState(user, userDoc.exists() ? userDoc.data() : null); } else { currentUser = null; updateUIForAuthState(null); } });
-            document.getElementById('signup-form').addEventListener('submit', async (e) => { e.preventDefault(); const name = e.target['signup-name'].value; const email = e.target['signup-email'].value; const password = e.target['signup-password'].value; try { const userCredential = await createUserWithEmailAndPassword(auth, email, password); await sendEmailVerification(userCredential.user); await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, phone: '', address: '', hasCoupon: true }); closeAuthModal('signup-modal'); } catch (error) { showAuthError('signup', error.message); } });
-            document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const email = e.target['login-email'].value; const password = e.target['login-password'].value; try { await signInWithEmailAndPassword(auth, email, password); closeAuthModal('login-modal'); } catch (error) { showAuthError('login', error.message); } });
-            document.getElementById('account-form').addEventListener('submit', async (e) => { e.preventDefault(); if (!currentUser) return; const name = e.target['account-name'].value; const phone = e.target['account-phone'].value; const address = e.target['account-address'].value; try { await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); const successMsg = document.getElementById('account-success'); successMsg.classList.remove('hidden'); setTimeout(() => successMsg.classList.add('hidden'), 3000); } catch (error) { showAuthError('account', error.message); } });
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <div class="text-xl sm:text-2xl font-bold text-green-600"><i class="fas fa-leaf mr-2"></i>Yamaguchi Halal Eats</div>
             
-            [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); }));
-            [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { if (!currentUser) return; dom.mobileMenu.classList.add('hidden'); const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { currentUserData = userDoc.data(); } else { currentUserData = { name: '', phone: '', address: '', hasCoupon: false }; } document.getElementById('account-name').value = currentUserData.name || ''; document.getElementById('account-phone').value = currentUserData.phone || ''; document.getElementById('account-address').value = currentUserData.address || ''; const couponList = dom.myCouponsList; couponList.innerHTML = ''; if (currentUserData && currentUserData.hasCoupon) { couponList.innerHTML = `<div class="bg-orange-100 border border-orange-200 text-orange-800 text-sm rounded-lg p-3 flex items-center"><i class="fas fa-ticket-alt mr-3"></i><span>${translations[currentLang].welcomeCoupon}</span></div>`; } else { couponList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noCoupons}</p>`; } openAuthModal('account-modal'); }));
-            [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); }));
-            [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); }));
-        }
-        
-        dom.menuList.addEventListener('click', addToCart);
-        [dom.languageSwitcher, dom.languageSwitcherMobile].forEach(switcher => switcher.addEventListener('click', (e) => { const lang = e.target.closest('.lang-btn')?.dataset.lang; if(lang) updateLanguage(lang); }));
-        document.getElementById('close-signup-modal-button').addEventListener('click', () => closeAuthModal('signup-modal'));
-        document.getElementById('close-login-modal-button').addEventListener('click', () => closeAuthModal('login-modal'));
-        document.getElementById('close-account-modal-button').addEventListener('click', () => closeAuthModal('account-modal'));
-        dom.closeCheckoutModalButton.addEventListener('click', closeCheckoutModal); dom.checkoutModal.addEventListener('click', e => e.target === dom.checkoutModal && closeCheckoutModal());
-        dom.closeSuccessModalButton.addEventListener('click', closeSuccessModal);
-        dom.cartButton.addEventListener('click', openCart); dom.mobileCartButton.addEventListener('click', openCart); dom.closeCartButton.addEventListener('click', closeCart);
-        dom.cartItemsContainer.addEventListener('click', handleQuantityChange);
-        dom.checkoutButton.addEventListener('click', openCheckoutModal);
-        dom.checkoutForm.addEventListener('submit', handleOrderSubmit);
-        dom.searchBar.addEventListener('input', filterMenu);
-        dom.adminPanelButton.addEventListener('click', openAdminPanel);
-        dom.closeAdminModalButton.addEventListener('click', closeAdminPanel);
-        dom.mobileMenuButton.addEventListener('click', () => { dom.mobileMenu.classList.remove('hidden'); document.body.style.overflow = 'hidden'; });
-        dom.closeMobileMenuButton.addEventListener('click', () => { dom.mobileMenu.classList.add('hidden'); document.body.style.overflow = 'auto'; });
-        dom.mobileMenu.querySelectorAll('.mobile-menu-link').forEach(link => link.addEventListener('click', () => { dom.mobileMenu.classList.add('hidden'); document.body.style.overflow = 'auto'; }));
-        dom.contactForm.addEventListener('submit', handleContactSubmit);
-        dom.applyCouponButton.addEventListener('click', () => 
-        { isCouponApplied = true; updateCart(); });
-        startHeroSlideshow();
-    });
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="#" data-key="homeLink" class="text-gray-600 hover:text-green-600">Home</a>
+                <a href="#calendar-section" data-key="calendarLink" class="text-gray-600 hover:text-green-600">Calendar</a>
+                <a href="#menu" data-key="menuLink" class="text-gray-600 hover:text-green-600">Our Menu</a>
+                <a href="#about" data-key="aboutUsLink" class="text-gray-600 hover:text-green-600">About Us</a>
+                <a href="#contact" data-key="contactLink" class="text-gray-600 hover:text-green-600">Contact</a>
+                <div class="w-px h-6 bg-gray-200"></div>
+                <div id="language-switcher" class="flex items-center border border-gray-200 rounded-lg p-1">
+                    <button data-lang="en" class="lang-btn text-sm font-semibold px-2 py-1 rounded-md">EN</button>
+                    <button data-lang="ja" class="lang-btn text-sm font-semibold px-2 py-1 rounded-md">日</button>
+                    <button data-lang="id" class="lang-btn text-sm font-semibold px-2 py-1 rounded-md">ID</button>
+                </div>
+                <div class="w-px h-6 bg-gray-200"></div>
+                <div id="auth-links-desktop" class="flex items-center space-x-2">
+                    <button id="login-button-desktop" data-key="loginBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-sm">Log In</button>
+                    <button id="signup-button-desktop" data-key="signupBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 text-sm">Sign Up</button>
+                </div>
+                <div id="user-links-desktop" class="hidden items-center space-x-4">
+                    <span id="welcome-message-desktop" class="font-semibold text-sm"></span>
+                    <button id="account-button-desktop" data-key="myAccountBtn" class="text-gray-600 hover:text-green-600 text-sm"><i class="fas fa-user-circle mr-1"></i>My Account</button>
+                    <button id="logout-button-desktop" data-key="logoutBtn" class="text-gray-600 hover:text-green-600 text-sm"><i class="fas fa-sign-out-alt mr-1"></i>Log Out</button>
+                </div>
+                <button id="cart-button" class="relative text-gray-600 hover:text-green-600">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-3 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+            </div>
+
+            <div class="md:hidden flex items-center space-x-4">
+                <button id="mobile-cart-button" class="relative text-gray-600 hover:text-green-600">
+                    <i class="fas fa-shopping-cart text-2xl"></i>
+                    <span id="mobile-cart-count" class="absolute -top-2 -right-3 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+                <button id="mobile-menu-button" class="text-gray-600 hover:text-green-600 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+    
+    <div id="mobile-menu" class="hidden fixed inset-0 bg-white z-50 p-6 flex flex-col">
+        <div class="flex justify-end mb-6">
+            <button id="close-mobile-menu-button" class="text-3xl text-gray-600">&times;</button>
+        </div>
+        <div class="flex flex-col items-center justify-center text-center flex-grow space-y-6 text-xl">
+            
+            <div id="language-switcher-mobile" class="flex items-center border border-gray-200 rounded-lg p-1 mb-4">
+                <button data-lang="en" class="lang-btn text-base font-semibold px-4 py-2 rounded-md">EN</button>
+                <button data-lang="ja" class="lang-btn text-base font-semibold px-4 py-2 rounded-md">日</button>
+                <button data-lang="id" class="lang-btn text-base font-semibold px-4 py-2 rounded-md">ID</button>
+            </div>
+
+            <div class="w-full border-t border-gray-200 my-2"></div>
+            
+            <a href="#" data-key="homeLink" class="mobile-menu-link text-gray-700 hover:text-green-600">Home</a>
+            <a href="#calendar-section" data-key="calendarLink" class="mobile-menu-link text-gray-700 hover:text-green-600">Calendar</a>
+            <a href="#menu" data-key="menuLink" class="mobile-menu-link text-gray-700 hover:text-green-600">Our Menu</a>
+            <a href="#about" data-key="aboutUsLink" class="mobile-menu-link text-gray-700 hover:text-green-600">About Us</a>
+            <a href="#contact" data-key="contactLink" class="mobile-menu-link text-gray-700 hover:text-green-600">Contact</a>
+            
+            <div class="w-full border-t border-gray-200 my-2"></div>
+
+            <div id="auth-links-mobile" class="flex flex-col items-center space-y-4 w-full">
+                <button id="login-button-mobile" data-key="loginBtn" class="w-full bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 text-lg">Log In</button>
+                <button id="signup-button-mobile" data-key="signupBtn" class="w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-300 text-lg">Sign Up</button>
+            </div>
+            <div id="user-links-mobile" class="hidden flex-col items-center space-y-4 w-full">
+                <span id="welcome-message-mobile" class="font-semibold text-lg"></span>
+                <button id="account-button-mobile" data-key="myAccountBtn" class="text-gray-700 hover:text-green-600 text-lg"><i class="fas fa-user-circle mr-1"></i>My Account</button>
+                <button id="logout-button-mobile" data-key="logoutBtn" class="text-gray-700 hover:text-green-600 text-lg"><i class="fas fa-sign-out-alt mr-1"></i>Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero-section text-white py-20 md:py-32"><div class="container mx-auto px-6 text-center"><h1 data-key="heroTitle" class="text-4xl md:text-6xl font-bold mb-4"></h1><p data-key="heroSubtitle" class="text-lg md:text-xl mb-8"></p><div class="max-w-2xl mx-auto"><div class="relative"><input id="search-bar" type="text" data-key="searchPlaceholder" class="w-full py-4 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-green-300"><button class="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-full px-6 py-3 hover:bg-green-700 transition"><i class="fas fa-search"></i></button></div></div></div></section>
+    <section id="what-is-halal" class="bg-green-50 py-16">
+        <div class="container mx-auto px-6 text-center max-w-3xl">
+            <h2 data-key="whatIsHalalTitle" class="text-3xl font-bold text-center mb-4 text-gray-800"></h2>
+            <div class="text-center mb-8">
+                <i class="fas fa-info-circle text-4xl text-green-500"></i>
+            </div>
+            <p data-key="whatIsHalalDesc" class="text-gray-600 leading-relaxed"></p>
+        </div>
+    </section>
+    <section id="calendar-section" class="bg-white py-16"><div class="container mx-auto px-6"><h2 data-key="calendarTitle" class="text-3xl font-bold text-center mb-4 text-gray-800"></h2><p data-key="calendarDesc" class="text-center text-gray-600 mb-8"></p><div class="max-w-3xl mx-auto bg-white p-4 sm:p-6 rounded-lg shadow-md"><div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center"></div></div><div id="preorder-status" class="text-center mt-6 text-lg font-semibold text-green-700 h-8"></div></div></section>
+    <main id="menu" class="container mx-auto px-6 py-16 pt-8"><h2 data-key="menuTitle" class="text-3xl font-bold text-center mb-12 text-gray-800"></h2><div id="menu-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div></main>
+    <section id="how-to-order" class="bg-white py-16"><div class="container mx-auto px-6 text-center"><h2 data-key="howToOrderTitle" class="text-3xl font-bold text-center mb-12"></h2><div class="flex flex-col md:flex-row justify-center items-center space-y-8 md:space-y-0 md:space-x-12"><div class="text-center"><div class="bg-green-100 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4"><i class="fas fa-mouse-pointer text-4xl text-green-600"></i></div><h3 data-key="step1Title" class="text-xl font-bold mb-2"></h3><p data-key="step1Desc" class="text-gray-600"></p></div><div class="text-center"><div class="bg-green-100 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4"><i class="fas fa-shopping-cart text-4xl text-green-600"></i></div><h3 data-key="step2Title" class="text-xl font-bold mb-2"></h3><p data-key="step2Desc" class="text-gray-600"></p></div><div class="text-center"><div class="bg-green-100 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4"><i class="fas fa-motorcycle text-4xl text-green-600"></i></div><h3 data-key="step3Title" class="text-xl font-bold mb-2"></h3><p data-key="step3Desc" class="text-gray-600"></p></div></div></div></section>
+    <section id="about" class="bg-gray-100 py-16"><div class="container mx-auto px-6 text-center max-w-3xl"><h2 data-key="aboutTitle" class="text-3xl font-bold text-center mb-4"></h2><div class="text-center mb-8"><i class="fas fa-users text-4xl text-green-500"></i></div><h3 data-key="historyTitle" class="text-2xl font-semibold text-gray-800 mb-4"></h3><p data-key="historyDesc" class="text-gray-600 leading-relaxed"></p></div></section>
+    
+    <section id="contact" class="bg-white py-16">
+        <div class="container mx-auto px-6 max-w-3xl">
+            <h2 data-key="contactTitle" class="text-3xl font-bold text-center mb-8"></h2>
+            <form id="contact-form" class="bg-white p-8 rounded-lg shadow-md space-y-4">
+                <div>
+                    <label for="contact-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label>
+                    <input type="text" id="contact-name" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                </div>
+                <div>
+                    <label for="contact-email" data-key="emailLabel" class="block text-sm font-medium text-gray-700"></label>
+                    <input type="email" id="contact-email" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                </div>
+                <div>
+                    <label for="contact-message" data-key="messageLabel" class="block text-sm font-medium text-gray-700"></label>
+                    <textarea id="contact-message" rows="4" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></textarea>
+                </div>
+                <div id="contact-form-feedback" class="text-center font-semibold h-6"></div>
+                <div class="pt-2">
+                    <button type="submit" id="contact-submit-button" data-key="sendMessageBtn" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition disabled:opacity-75"></button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800 text-white py-8"><div class="container mx-auto px-6 text-center"><p data-key="footerRights" class="mb-4"></p><button id="admin-panel-button" data-key="adminPanelBtn" class="text-sm text-gray-400 hover:text-white underline"></button></div></footer>
+
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col"><div class="p-6 border-b flex justify-between items-center"><h3 data-key="cartTitle" class="text-2xl font-bold"></h3><button id="close-cart-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div id="cart-items" class="p-6 overflow-y-auto flex-grow"><p id="empty-cart-message" data-key="cartEmpty" class="text-gray-500"></p></div><div class="p-6 border-t bg-gray-50 space-y-4"><div id="coupon-section" class="hidden"><button id="apply-coupon-button" data-key="applyCouponBtn" class="w-full bg-orange-400 text-white py-2 rounded-lg font-bold hover:bg-orange-500 transition"></button></div><div class="space-y-1"><div class="flex justify-between items-center text-gray-600"><span data-key="subtotalLabel"></span><span id="cart-subtotal"></span></div><div id="discount-row" class="hidden flex justify-between items-center text-green-600"><span data-key="discountLabel"></span><span id="cart-discount"></span></div><div class="flex justify-between items-center text-xl font-bold border-t pt-2 mt-2"><span data-key="cartTotal"></span><span id="cart-total"></span></div></div><button id="checkout-button" data-key="checkoutBtn" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition disabled:bg-gray-400"></button></div></div>
+    <div id="checkout-modal" class="checkout-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div id="checkout-modal-content" class="checkout-modal-content bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 data-key="checkoutModalTitle" class="text-2xl font-bold"></h3><button id="close-checkout-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="checkout-form" class="p-6 overflow-y-auto" novalidate><h4 data-key="yourInfoTitle" class="text-lg font-semibold mb-4"></h4><div class="space-y-4"><div><label for="customer-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label><input type="text" id="customer-name" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-phone" data-key="phoneLabel" class="block text-sm font-medium text-gray-700"></label><input type="tel" id="customer-phone" name="phone" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-email" data-key="emailLabel" class="block text-sm font-medium text-gray-700"></label><input type="email" id="customer-email" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label for="customer-address" data-key="addressLabel" class="block text-sm font-medium text-gray-700"></label><textarea id="customer-address" name="address" rows="3" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></textarea><p class="mt-2 text-xs text-gray-500" data-key="addressNote"></p></div></div><div id="form-error" data-key="formError" class="text-red-500 text-sm mt-4 hidden"></div><div class="mt-6 border-t pt-4"><div class="flex justify-between items-center text-lg"><span data-key="totalPaymentLabel"></span><span id="checkout-total" class="font-bold text-xl"></span></div></div></form><div class="p-6 bg-gray-50 border-t"><button type="submit" id="confirm-order-button" data-key="confirmOrderBtn" form="checkout-form" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition disabled:opacity-75"></button></div></div></div>
+    <div id="success-modal" class="success-modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 hidden"><div class="bg-white rounded-lg shadow-xl w-full max-w-sm text-center p-8"><div class="text-green-500 mb-4"><i class="fas fa-check-circle fa-4x"></i></div><h3 data-key="thankYouTitle" class="text-2xl font-bold mb-2"></h3><p data-key="thankYouDesc" class="text-gray-600 mb-6"></p><button id="close-success-modal-button" data-key="closeBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition"></button></div></div>
+    <div id="admin-modal" class="admin-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div class="admin-modal-content bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 class="text-2xl font-bold">Order Management Panel</h3><button id="close-admin-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div id="order-list" class="p-6 overflow-y-auto bg-gray-100 flex-grow"><p class="text-center text-gray-500">No orders yet.</p></div></div></div>
+    <div id="signup-modal" class="auth-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div class="auth-modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 data-key="createAccountTitle" class="text-2xl font-bold"></h3><button id="close-signup-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div class="p-6"><div class="bg-green-50 border border-green-200 text-green-800 text-sm rounded-lg p-4 mb-4 flex items-start"><i class="fas fa-info-circle mr-3 mt-1"></i><p data-key="signupBenefit"></p></div></div><form id="signup-form" class="px-6 pb-6 space-y-4" novalidate><div><label for="signup-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label><input type="text" id="signup-name" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="signup-email" data-key="emailLabel" class="block text-sm font-medium text-gray-700"></label><input type="email" id="signup-email" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="signup-password" data-key="passwordLabel" class="block text-sm font-medium text-gray-700"></label><input type="password" id="signup-password" required minlength="6" class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div id="signup-error" class="auth-error hidden"></div><div class="pt-2"><button type="submit" data-key="signupBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700"></button></div></form></div></div>
+    <div id="login-modal" class="auth-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div class="auth-modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 data-key="loginTitle" class="text-2xl font-bold"></h3><button id="close-login-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="p-6 space-y-4" novalidate><div><label for="login-email" data-key="emailLabel" class="block text-sm font-medium text-gray-700"></label><input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="login-password" data-key="passwordLabel" class="block text-sm font-medium text-gray-700"></label><input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div id="login-error" class="auth-error hidden"></div><div class="pt-2"><button type="submit" data-key="loginBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700"></button></div></form></div></div>
+    <div id="account-modal" class="auth-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div class="auth-modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 data-key="myAccountTitle" class="text-2xl font-bold"></h3><button id="close-account-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div class="p-6 space-y-6"><form id="account-form" class="space-y-4" novalidate><div><label for="account-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label><input type="text" id="account-name" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="account-phone" data-key="phoneLabel" class="block text-sm font-medium text-gray-700"></label><input type="tel" id="account-phone" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="account-address" data-key="addressLabel" class="block text-sm font-medium text-gray-700"></label><textarea id="account-address" rows="3" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></textarea></div><div id="account-success" data-key="profileUpdateSuccess" class="text-green-600 text-sm mt-2 text-center hidden"></div><div id="account-error" class="auth-error hidden"></div><div class="pt-2"><button type="submit" data-key="saveChangesBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700"></button></div></form><div class="border-t pt-6"><h4 data-key="myCoupons" class="text-lg font-semibold mb-3 text-gray-800"></h4><div id="my-coupons-list"></div></div></div></div></div>
+    
+    <script src="script.js" type="module"></script>
+</body>
+</html>

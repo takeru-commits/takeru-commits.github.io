@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return; 
         } 
         dom.formError.classList.add('hidden'); 
-        const originalButtonText = confirmButton.innerHTML; 
+        const originalButtonText = confirmButton.innerHTML; // 変数名を修正
         confirmButton.disabled = true; 
         confirmButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; 
         
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!db || !auth) { 
             alert(translations[currentLang].dbError); 
             confirmButton.disabled = false; 
-            confirmButton.innerHTML = originalText; 
+            confirmButton.innerHTML = originalButtonText; // 変数名を修正
             return; 
         } 
         
@@ -389,20 +389,25 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(translations[currentLang].orderError); 
         } finally { 
             confirmButton.disabled = false; 
-            confirmButton.innerHTML = originalText; 
+            confirmButton.innerHTML = originalButtonText; // 変数名を修正
         } 
     }
-    async function handleContactSubmit(e) { e.preventDefault(); const submitButton = dom.contactSubmitButton; if (!dom.contactForm.checkValidity()) { return; } const originalButtonText = submitButton.innerHTML; submitButton.disabled = true; submitButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); submitButton.disabled = false; submitButton.innerHTML = originalText; return; } const name = document.getElementById('contact-name').value; const email = document.getElementById('contact-email').value; const message = document.getElementById('contact-message').value; try { await addDoc(collection(db, "inquiries"), { name, email, message, createdAt: serverTimestamp() }); dom.contactFormFeedback.textContent = translations[currentLang].messageSuccess; dom.contactFormFeedback.classList.remove('text-red-500'); dom.contactFormFeedback.classList.add('text-green-600'); dom.contactForm.reset(); } catch (err) { console.error("Error saving inquiry: ", err); dom.contactFormFeedback.textContent = translations[currentLang].orderError; dom.contactFormFeedback.classList.add('text-red-500'); dom.contactFormFeedback.classList.remove('text-green-600'); } finally { setTimeout(() => { dom.contactFormFeedback.textContent = ''; submitButton.disabled = false; submitButton.innerHTML = originalText; }, 4000); } }
+    async function handleContactSubmit(e) { e.preventDefault(); const submitButton = dom.contactSubmitButton; if (!dom.contactForm.checkValidity()) { return; } const originalButtonText = submitButton.innerHTML; submitButton.disabled = true; submitButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); submitButton.disabled = false; submitButton.innerHTML = originalButtonText; return; } const name = document.getElementById('contact-name').value; const email = document.getElementById('contact-email').value; const message = document.getElementById('contact-message').value; try { await addDoc(collection(db, "inquiries"), { name, email, message, createdAt: serverTimestamp() }); dom.contactFormFeedback.textContent = translations[currentLang].messageSuccess; dom.contactFormFeedback.classList.remove('text-red-500'); dom.contactFormFeedback.classList.add('text-green-600'); dom.contactForm.reset(); } catch (err) { console.error("Error saving inquiry: ", err); dom.contactFormFeedback.textContent = translations[currentLang].orderError; dom.contactFormFeedback.classList.add('text-red-500'); dom.contactFormFeedback.classList.remove('text-green-600'); } finally { setTimeout(() => { dom.contactFormFeedback.textContent = ''; submitButton.disabled = false; submitButton.innerHTML = originalButtonText; }, 4000); } }
     function showSuccessModal() { dom.successModal.classList.remove('hidden'); }
     function closeSuccessModal() { dom.successModal.classList.add('hidden'); }
         
     // --- ユーザーの注文履歴をロードする関数 ---
     async function loadUserOrders(userId) {
         // Firebaseが初期化されているか、ユーザーIDが存在するかをチェック
-        if (!db || !auth || !userId) { 
-            dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noOrders || 'No orders found.'}</p>`;
+        if (!db || !auth) { 
+            dom.myOrdersList.innerHTML = `<p class="text-red-500 text-sm">${translations[currentLang].orderLoadError || 'Failed to load orders.'}</p>`;
             return;
         }
+        if (!userId) {
+            dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].loginToSeeOrders || 'Log in to see your orders.'}</p>`;
+            return;
+        }
+
 
         try {
             // Firestoreから現在のユーザーの注文を取得 (createdAtで降順ソート)
@@ -569,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const slideshowImages = [
             'ramen.png',
             'lassi.png'
-        ];         
+        ];          
         slideshowImages.forEach(src => {
             const img = new Image();
             img.src = src;
@@ -615,7 +620,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const email = e.target['login-email'].value; const password = e.target['login-password'].value; try { await signInWithEmailAndPassword(auth, email, password); closeAuthModal('login-modal'); } catch (error) { showAuthError('login', error.message); } });
         document.getElementById('account-form').addEventListener('submit', async (e) => { e.preventDefault(); if (!currentUser || !db) return; const name = e.target['account-name'].value; const phone = e.target['account-phone'].value; const address = e.target['account-address'].value; try { await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); const successMsg = document.getElementById('account-success'); successMsg.classList.remove('hidden'); setTimeout(() => successMsg.classList.add('hidden'), 3000); } catch (error) { showAuthError('account', error.message); } });
             
-        [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); }));
+        [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => {
+            if (btn) btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); });
+        });
         [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { 
             // Firebase Authが初期化されているか確認
             if (!currentUser || !auth || !db) {
@@ -644,8 +651,12 @@ document.addEventListener('DOMContentLoaded', () => {
             await loadUserOrders(currentUser.uid); 
             openAuthModal('account-modal'); 
         }));
-        [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); }));
-        [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); }));
+        [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => {
+            if (btn) btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); });
+        });
+        [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => {
+            if (btn) btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); });
+        });
     } else {
         console.error("Firebase Authが初期化されていないため、認証関連のイベントリスナーは登録されませんでした。");
         // Firebaseが初期化されない場合の認証関連ボタンの動作を無効化するなどのUI処理をここに追加することも検討

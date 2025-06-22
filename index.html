@@ -105,10 +105,10 @@
         <h2 data-key="menuTitle" class="text-3xl font-bold text-center mb-8 text-gray-800"></h2>
         
         <div class="flex flex-wrap justify-center gap-4 mb-12">
-            <button class="menu-button font-semibold" data-menu="japanese" data-key="japaneseCategory">日本料理</button>
-            <button class="menu-button font-semibold" data-menu="indonesian" data-key="indonesianCategory">インドネシア料理</button>
-            <button class="menu-button font-semibold" data-menu="sweets" data-key="sweetsCategory">スイーツ</button>
-            <button class="menu-button font-semibold" data-menu="drinks" data-key="drinksCategory">ドリンク</button>
+            <button class="menu-button font-semibold" data-menu="japanese" data-key="japaneseCategory"></button>
+            <button class="menu-button font-semibold" data-menu="indonesian" data-key="indonesianCategory"></button>
+            <button class="menu-button font-semibold" data-menu="sweets" data-key="sweetsCategory"></button>
+            <button class="menu-button font-semibold" data-menu="drinks" data-key="drinksCategory"></button>
         </div>
 
         <div id="menu-display-area">
@@ -175,15 +175,15 @@
             <div class="space-y-4">
                 <div>
                     <label for="customer-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label>
-                    <input type="text" id="customer-name" name="name" required autocomplete="name" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500">
+                    <input type="text" id="customer-name" name="name" required autocomplete="name" class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
                 </div>
                 <div>
                     <label for="customer-phone" data-key="phoneLabel" class="block text-sm font-medium text-gray-700"></label>
-                    <input type="tel" id="customer-phone" name="phone" required autocomplete="tel" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+                    <input type="tel" id="customer-phone" name="phone" required autocomplete="tel" class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
                 </div>
                 <div>
                     <label for="customer-email" data-key="emailLabel" class="block text-sm font-medium text-gray-700"></label>
-                    <input type="email" id="customer-email" name="email" required autocomplete="email" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+                    <input type="email" id="customer-email" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
                 </div>
                 <div>
                     <label for="customer-address" data-key="addressLabel" class="block text-sm font-medium text-gray-700"></label>
@@ -207,47 +207,47 @@
     <div id="success-modal" class="success-modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 hidden"><div class="bg-white rounded-lg shadow-xl w-full max-w-sm text-center p-8"><div class="text-green-500 mb-4"><i class="fas fa-check-circle fa-4x"></i></div><h3 data-key="thankYouTitle" class="text-2xl font-bold mb-2"></h3><p data-key="thankYouDesc" class="text-gray-600 mb-6"></p><button id="close-success-modal-button" data-key="closeBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition"></button></div></div>
     <div id="admin-modal" class="admin-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div class="admin-modal-content bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 class="text-2xl font-bold">Order Management Panel</h3><button id="close-admin-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div id="order-list" class="p-6 overflow-y-auto bg-gray-100 flex-grow"><p class="text-center text-gray-500">No orders yet.</p></div></div></div>
     <div id="signup-modal" class="auth-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div class="auth-modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 data-key="createAccountTitle" class="text-2xl font-bold"></h3><button id="close-signup-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><div class="p-6"><div class="bg-green-50 border border-green-200 text-green-800 text-sm rounded-lg p-4 mb-4 flex items-start"><i class="fas fa-info-circle mr-3 mt-1"></i><p data-key="signupBenefit"></p></div></div><form id="signup-form" class="px-6 pb-6 space-y-4" novalidate><div><label for="signup-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label><input type="text" id="signup-name" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="signup-email" data-key="emailLabel" class="block text-sm font-medium text-gray-700"></label><input type="email" id="signup-email" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="signup-password" data-key="passwordLabel" class="block text-sm font-medium text-gray-700"></label><input type="password" id="signup-password" required minlength="6" class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div id="signup-error" class="auth-error hidden"></div><div class="pt-2"><button type="submit" data-key="signupBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700"></button></div></form></div></div>
-    <div id="login-modal" class="auth-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div class="auth-modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 data-key="loginTitle" class="text-2xl font-bold"></h3><button id="close-login-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="p-6 space-y-4" novalidate><div><label for="login-email" data-key="emailLabel" class="block text-sm font-medium text-gray-700"></label><input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="login-password" data-key="passwordLabel" class="block text-sm font-medium text-gray-700"></label><input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div id="login-error" class="auth-error hidden"></div><div class="pt-2"><button type="submit" data-key="loginBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700"></button></div></form></div></div>
-    <div id="account-modal" class="auth-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden">
-        <div class="auth-modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform scale-95">
-            <div class="p-6 border-b flex justify-between items-center">
-                <h3 data-key="myAccountTitle" class="text-2xl font-bold"></h3>
-                <button id="close-account-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
-            </div>
-            <div class="p-6 space-y-6">
-                <form id="account-form" class="space-y-4" novalidate>
-                    <div>
-                        <label for="account-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label>
-                        <input type="text" id="account-name" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                    </div>
-                    <div>
-                        <label for="account-phone" data-key="phoneLabel" class="block text-sm font-medium text-gray-700"></label>
-                        <input type="tel" id="account-phone" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                    </div>
-                    <div>
-                        <label for="account-address" data-key="addressLabel" class="block text-sm font-medium text-gray-700"></label>
-                        <textarea id="account-address" rows="3" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></textarea>
-                    </div>
-                    <div id="account-success" data-key="profileUpdateSuccess" class="text-green-600 text-sm mt-2 text-center hidden"></div>
-                    <div id="account-error" class="auth-error hidden"></div>
-                    <div class="pt-2">
-                        <button type="submit" data-key="saveChangesBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700"></button>
-                    </div>
-                </form>
-                
-                <div class="border-t pt-6">
-                    <h4 data-key="myCoupons" class="text-lg font-semibold mb-3 text-gray-800"></h4>
-                    <div id="my-coupons-list"></div>
-                </div>
-                <div class="border-t pt-6">
-                    <h4 data-key="myOrders" class="text-lg font-semibold mb-3 text-gray-800"></h4>
-                    <div id="my-orders-list" class="space-y-3">
-                        </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="login-modal" class="auth-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden"><div class="auth-modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform scale-95"><div class="p-6 border-b flex justify-between items-center"><h3 data-key="loginTitle" class="text-2xl font-bold"></h3><button id="close-login-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="p-6 space-y-4" novalidate><div><label for="login-email" data-key="emailLabel" class="block text-sm font-medium text-gray-700"></label><input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div><label for="login-password" data-key="passwordLabel" class="block text-sm font-medium text-gray-700"></label><input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></div><div id="login-error" class="auth-error hidden"></div><div class="pt-2"><button type="submit" data-key="loginBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700"></button></div></form></div></div>
+    <div id="account-modal" class="auth-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden">
+        <div class="auth-modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform scale-95">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h3 data-key="myAccountTitle" class="text-2xl font-bold"></h3>
+                <button id="close-account-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="p-6 space-y-6">
+                <form id="account-form" class="space-y-4" novalidate>
+                    <div>
+                        <label for="account-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label>
+                        <input type="text" id="account-name" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                    </div>
+                    <div>
+                        <label for="account-phone" data-key="phoneLabel" class="block text-sm font-medium text-gray-700"></label>
+                        <input type="tel" id="account-phone" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                    </div>
+                    <div>
+                        <label for="account-address" data-key="addressLabel" class="block text-sm font-medium text-gray-700"></label>
+                        <textarea id="account-address" rows="3" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"></textarea>
+                    </div>
+                    <div id="account-success" data-key="profileUpdateSuccess" class="text-green-600 text-sm mt-2 text-center hidden"></div>
+                    <div id="account-error" class="auth-error hidden"></div>
+                    <div class="pt-2">
+                        <button type="submit" data-key="saveChangesBtn" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700"></button>
+                    </div>
+                </form>
+                
+                <div class="border-t pt-6">
+                    <h4 data-key="myCoupons" class="text-lg font-semibold mb-3 text-gray-800"></h4>
+                    <div id="my-coupons-list"></div>
+                </div>
+                <div class="border-t pt-6">
+                    <h4 data-key="myOrders" class="text-lg font-semibold mb-3 text-gray-800"></h4>
+                    <div id="my-orders-list" class="space-y-3">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script type="module" src="script.js"></script> 
+    <script type="module" src="script.js"></script> 
 </body>
 </html>

@@ -12,7 +12,14 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9
 .calendar-day.preorder-day:hover { background-color: #d1fae5; }
 .calendar-day.selected { outline: 2px solid #10b981; outline-offset: 2px; background-color: #a7f3d0; }
 .auth-error { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; text-align: center; }
-.lang-btn.active { background-color: #10b981; color: white; }
+
+/* 言語選択ボタンのアクティブスタイルを更新 */
+.lang-btn.active { 
+    background-color: #10B981; /* 緑色 */
+    color: white; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 少し影を追加 */
+    transform: translateY(-1px); /* 少し上に移動する視覚効果 */
+}
 
 .flying-image {
     position: fixed;
@@ -32,21 +39,20 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9
     animation: shake 0.3s ease-in-out;
 }
 
-/* ●↓この場所を追加してください：メニューカテゴリボタンのアクティブスタイル */
+/* メニューカテゴリボタンのアクティブスタイル */
 .menu-button.active-menu-button {
-    background-color: #10B981 !important; /* Tailwindのgreen-600くらいの色 */
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5); /* リングのような効果 */
-    transform: translateY(-2px); /* 少し上に移動させる効果 */
+    background-color: #10B981 !important; 
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5); 
+    transform: translateY(-2px); 
 }
 
-/* ●↓この場所を追加してください：メニューコンテンツのフェードインアニメーション（任意） */
+/* メニューコンテンツのフェードインアニメーション（任意） */
 .menu-content.active {
-    display: block; /* activeクラスが付いたら表示 */
-    animation: fadeIn 0.5s ease-out; /* フェードインアニメーション */
+    display: block; 
+    animation: fadeIn 0.5s ease-out; 
 }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-/* ●↑この場所を追加してください */

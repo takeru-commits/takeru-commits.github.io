@@ -17,7 +17,8 @@ let db, auth;
 
 // ★★★ ここが修正箇所です！ ★★★
 // Firebase ConfigのAPIキーが存在し、かつそれが「YOUR_API_KEY」のようなダミーでない場合にのみ初期化する
-if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "
+AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y") {
     try { 
         const app = initializeApp(firebaseConfig); 
         db = getFirestore(app); 

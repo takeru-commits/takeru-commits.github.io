@@ -1,3 +1,5 @@
+/* style.css */
+
 html { scroll-behavior: smooth; }
 body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9fa; }
 .hero-section {
@@ -13,12 +15,12 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9
 .calendar-day.selected { outline: 2px solid #10b981; outline-offset: 2px; background-color: #a7f3d0; }
 .auth-error { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; text-align: center; }
 
-/* 言語選択ボタンのアクティブスタイルを更新 */
+/* 言語選択ボタンのアクティブスタイル */
 .lang-btn.active { 
     background-color: #10B981; /* 緑色 */
     color: white; 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 少し影を追加 */
-    transform: translateY(-1px); /* 少し上に移動する視覚効果 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    transform: translateY(-1px); 
 }
 
 .flying-image {
@@ -39,14 +41,63 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9
     animation: shake 0.3s ease-in-out;
 }
 
-/* メニューカテゴリボタンのアクティブスタイル */
-.menu-button.active-menu-button {
-    background-color: #10B981 !important; 
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5); 
-    transform: translateY(-2px); 
+/* --- ここからメニューカテゴリボタンの新しいスタイル定義 --- */
+
+/* メニューカテゴリボタンのデフォルト（非アクティブ時）スタイル */
+.menu-button {
+    background-color: #E5E7EB; /* 薄いグレー (Tailwind gray-200) */
+    color: #4B5563; /* 濃いグレー (Tailwind gray-700) */
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: all 0.3s ease; /* スムーズな色変化と動きのために追加 */
+    min-width: 150px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* メニューコンテンツのフェードインアニメーション（任意） */
+.menu-button:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* ホバー時の影を強調 */
+    transform: translateY(-2px); /* ホバー時の浮き上がり効果 */
+}
+
+/* 各メニューカテゴリのアクティブ時のスタイル */
+/* JavaScriptで `active-menu-button` と同時にそれぞれのクラスが適用されます */
+
+/* 日本料理 (赤) */
+.menu-button.japanese-active {
+    background-color: #B91C1C; /* 深みのある赤 (red-700) */
+    color: #FFFFFF; /* 白 */
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.5); /* アクティブ時のリング効果 */
+    transform: translateY(-2px);
+}
+
+/* インドネシア料理 (オレンジ) */
+.menu-button.indonesian-active {
+    background-color: #F97316; /* 鮮やかなオレンジ (orange-500) */
+    color: #333333; /* 濃いグレー */
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.5);
+    transform: translateY(-2px);
+}
+
+/* スイーツ (ピンク) */
+.menu-button.sweets-active {
+    background-color: #EC4899; /* 柔らかなピンク (pink-500) */
+    color: #FFFFFF; /* 白 */
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.5);
+    transform: translateY(-2px);
+}
+
+/* ドリンク (シアン) */
+.menu-button.drinks-active {
+    background-color: #06B6D4; /* 明るいシアン (cyan-500) */
+    color: #FFFFFF; /* 白 */
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.5);
+    transform: translateY(-2px);
+}
+
+/* メニューコンテンツのフェードインアニメーション */
 .menu-content.active {
     display: block; 
     animation: fadeIn 0.5s ease-out; 

@@ -14,7 +14,7 @@ const firebaseConfig = {
 };
 
 let db, auth;
-if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "rgKDs7T8tsdoDQigLLX2CkGprx62") {
+if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y") {
     try { const app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); }
     catch (e) { console.error("Error initializing Firebase:", e); }
 }

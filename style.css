@@ -41,10 +41,9 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9
     animation: shake 0.3s ease-in-out;
 }
 
-/* --- ここからメニューカテゴリボタンの新しいスタイル定義 --- */
+/* --- ここからメニューカテゴリボタンの新しいスタイル定義（以前の多色案） --- */
 
-/* 各メニューカテゴリボタンの初期スタイル (提案された色を直接設定) */
-/* ホバー時の共通スタイルもここで定義 */
+/* メニューカテゴリボタンの共通ベーススタイル */
 .menu-button {
     padding: 15px 30px;
     border: none;
@@ -61,28 +60,28 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9
     transform: translateY(-2px); /* ホバー時の浮き上がり効果 */
 }
 
-/* 日本料理ボタンの初期スタイル */
+/* 日本料理ボタンのデフォルトスタイル */
 .menu-button[data-menu="japanese"] {
-    background-color: #B91C1C; /* red-700 */
-    color: #FFFFFF; /* white */
+    background-color: #B91C1C; /* 深みのある赤 (red-700) */
+    color: #FFFFFF; /* 白 */
 }
 
-/* インドネシア料理ボタンの初期スタイル */
+/* インドネシア料理ボタンのデフォルトスタイル */
 .menu-button[data-menu="indonesian"] {
-    background-color: #F97316; /* orange-500 */
-    color: #333333; /* dark gray */
+    background-color: #F97316; /* 鮮やかなオレンジ (orange-500) */
+    color: #333333; /* 濃いグレー */
 }
 
-/* スイーツボタンの初期スタイル */
+/* スイーツボタンのデフォルトスタイル */
 .menu-button[data-menu="sweets"] {
-    background-color: #EC4899; /* pink-500 */
-    color: #FFFFFF; /* white */
+    background-color: #EC4899; /* 柔らかなピンク (pink-500) */
+    color: #FFFFFF; /* 白 */
 }
 
-/* ドリンクボタンの初期スタイル */
+/* ドリンクボタンのデフォルトスタイル */
 .menu-button[data-menu="drinks"] {
-    background-color: #06B6D4; /* cyan-500 */
-    color: #FFFFFF; /* white */
+    background-color: #06B6D4; /* 明るいシアン (cyan-500) */
+    color: #FFFFFF; /* 白 */
 }
 
 /* アクティブなメニューボタンに適用される共通の強調スタイル */

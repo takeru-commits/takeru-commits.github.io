@@ -4,7 +4,7 @@ import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTim
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
     
 const firebaseConfig = {
-    apiKey: "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y",
+    apiKey: "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y", // ★★★ あなたの実際のFirebase APIキーに置き換えてください！ ★★★
     authDomain: "yamaguchi-halal-eats.firebaseapp.com",
     projectId: "yamaguchi-halal-eats",
     storageBucket: "yamaguchi-halal-eats.appspot.com",
@@ -39,7 +39,7 @@ const translations = {
         cartTitle: "Shopping Cart", cartEmpty: "Your cart is empty.", cartTotal: "Total:", checkoutBtn: "Checkout", 
         checkoutModalTitle: "Confirm Your Order", yourInfoTitle: "Your Information", nameLabel: "Full Name", phoneLabel: "Phone Number", emailLabel: "Email Address", addressLabel: "Delivery Address", addressNote: "Please enter your home address only. Delivery to public institutions is not available.", formError: "Please fill in all fields.", totalPaymentLabel: "Total Payment:", confirmOrderBtn: "Confirm Order", 
         thankYouTitle: "Thank You for Your Order!", thankYouDesc: "Your order has been successfully placed.", closeBtn: "Close", 
-        createAccountTitle: "Create Your Account", passwordLabel: "Password", loginTitle: "Log In to Your Account", myAccountTitle: "My Account", profileUpdateSuccess: "Profile updated successfully!", saveChangesBtn: "Save Changes", welcome: "Welcome", preorderYamaguchi: "Delivery for {date} is available for residents of Yamaguchi City. Please proceed with your order.", preorderUbe: "Delivery for {date} is available for residents of Ube City. Please proceed with your order.", dbError: "Database connection error. Order cannot be saved because Firebase is not configured.", orderError: "An error occurred while processing your order. Please try again.", passwordIncorrect: "Incorrect password.", signupBenefit: "Sign up to skip entering your delivery info every time & get a ¥100 coupon!", subtotalLabel: "Subtotal", discountLabel: "Coupon Discount", applyCouponBtn: "Apply ¥100 Coupon", couponApplied: "✓ Coupon Applied", myCoupons: "My Coupons", myOrders: "My Orders", welcomeCoupon: "¥100 OFF Welcome Coupon", noCoupons: "You have no available coupons.", whatIsHalalTitle: "What is Halal Food?", whatIsHalalDesc: "Halal is an Arabic word that means 'permissible' according to Islamic law. Agar makanan dapat disertifikasi sebagai Halal, makanan tersebut harus mematuhi serangkaian aturan ketat mengenai bahan dan metode persiapan. Ini memastikan bahwa makanan tersebut bersih, suci, dan disiapkan dengan cara yang manusiawi." 
+        createAccountTitle: "Create Your Account", passwordLabel: "Password", loginTitle: "Log In to Your Account", myAccountTitle: "My Account", profileUpdateSuccess: "Profile updated successfully!", saveChangesBtn: "Save Changes", welcome: "Welcome", preorderYamaguchi: "Delivery for {date} is available for residents of Yamaguchi City. Please proceed with your order.", preorderUbe: "Delivery for {date} is available for residents of Ube City. Please proceed with your order.", dbError: "Database connection error. Order cannot be saved because Firebase is not configured.", orderError: "An error occurred while processing your order. Please try again.", passwordIncorrect: "Incorrect password.", signupBenefit: "Sign up to skip entering your delivery info every time & get a ¥100 coupon!", subtotalLabel: "Subtotal", discountLabel: "Coupon Discount", applyCouponBtn: "Apply ¥100 Coupon", couponApplied: "✓ Coupon Applied", myCoupons: "My Coupons", myOrders: "My Orders", welcomeCoupon: "¥100 OFF Welcome Coupon", noCoupons: "You have no available coupons.", whatIsHalalTitle: "What is Halal Food?", whatIsHalalDesc: "Halal is an Arabic word that means 'permissible' according to Islamic law. For food to be certified as Halal, it must adhere to a strict set of rules regarding ingredients and preparation methods. This ensures that the food is clean, pure, and prepared in a humane way." 
     },
     ja: { 
         homeLink: "ホーム", menuLink: "メニュー", howToOrderLink: "注文方法", aboutUsLink: "私たちについて", contactLink: "お問い合わせ", calendarLink: "カレンダー", loginBtn: "ログイン", signupBtn: "新規登録", myAccountBtn: '<i class="fas fa-user-circle mr-1"></i>アカウント', logoutBtn: '<i class="fas fa-sign-out-alt mr-1"></i>ログアウト', 
@@ -229,15 +229,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!button) return;
 
         const card = button.closest('.bg-white.rounded-lg.shadow-lg'); 
-
         const itemImage = card.querySelector('img');
-        const cartIcon = document.getElementById('cart-button');
+        
+        // ★★★ ここから修正部分 ★★★
+        // 現在表示されているカートアイコン（デスクトップ用またはモバイル用）を検出
+        let cartIcon = null;
+        if (dom.cartButton && dom.cartButton.offsetParent !== null) { // offsetParentがnullでない場合、要素が表示されている
+            cartIcon = dom.cartButton;
+        } else if (dom.mobileCartButton && dom.mobileCartButton.offsetParent !== null) {
+            cartIcon = dom.mobileCartButton;
+        }
 
         if (itemImage && cartIcon) {
             const imageRect = itemImage.getBoundingClientRect();
             const cartRect = cartIcon.getBoundingClientRect();
+            
             const flyingImage = itemImage.cloneNode();
             flyingImage.classList.add('flying-image');
+            
+            // 初期の位置を設定
             flyingImage.style.width = `${imageRect.width}px`;
             flyingImage.style.height = `${imageRect.height}px`;
             flyingImage.style.top = `${imageRect.top}px`;
@@ -245,10 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(flyingImage);
 
             requestAnimationFrame(() => {
+                // ターゲット位置をカートアイコンの中央に設定
+                const targetX = cartRect.left + cartRect.width / 2 - 15; // 飛行画像の幅の半分を引く (ここでは適当な値15pxを使用)
+                const targetY = cartRect.top + cartRect.height / 2 - 15; // 飛行画像の高さの半分を引く
+
                 flyingImage.style.width = '30px';
                 flyingImage.style.height = '30px';
-                flyingImage.style.top = `${cartRect.top + 10}px`;
-                flyingImage.style.left = `${cartRect.left + 10}px`;
+                flyingImage.style.top = `${targetY}px`;
+                flyingImage.style.left = `${targetX}px`;
                 flyingImage.style.opacity = '0';
             });
 
@@ -258,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartIcon.classList.remove('cart-shake');
             }, 700);
         }
+        // ★★★ ここまで修正部分 ★★★
 
         const itemId = parseInt(button.dataset.itemId);
         const menuItem = menuItems.find(m => m.id === itemId);

@@ -1,33 +1,52 @@
- html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9fa; }
-        .hero-section {
-            background-size: cover;
-            background-position: center;
-            transition: background-image 1s ease-in-out;
-        }
-        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        .modal, .auth-modal, .checkout-modal, .success-modal, .admin-modal, #mobile-menu, #ai-suggestion-modal { transition: opacity 0.3s ease; }
-        .modal-content, .auth-modal-content, .checkout-modal-content, .success-modal-content, .admin-modal-content { transition: transform 0.3s ease; }
-        .calendar-day.preorder-day { cursor: pointer; }
-        .calendar-day.preorder-day:hover { background-color: #d1fae5; }
-        .calendar-day.selected { outline: 2px solid #10b981; outline-offset: 2px; background-color: #a7f3d0; }
-        .auth-error { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; text-align: center; }
-        .lang-btn.active { background-color: #10b981; color: white; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8f9fa; }
+.hero-section {
+    background-size: cover;
+    background-position: center;
+    transition: background-image 1s ease-in-out;
+}
+.menu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.modal, .auth-modal, .checkout-modal, .success-modal, .admin-modal, #mobile-menu, #ai-suggestion-modal { transition: opacity 0.3s ease; }
+.modal-content, .auth-modal-content, .checkout-modal-content, .success-modal-content, .admin-modal-content { transition: transform 0.3s ease; }
+.calendar-day.preorder-day { cursor: pointer; }
+.calendar-day.preorder-day:hover { background-color: #d1fae5; }
+.calendar-day.selected { outline: 2px solid #10b981; outline-offset: 2px; background-color: #a7f3d0; }
+.auth-error { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; text-align: center; }
+.lang-btn.active { background-color: #10b981; color: white; }
 
-        .flying-image {
-            position: fixed;
-            z-index: 1000;
-            transition: all 0.7s cubic-bezier(0.5, 0, 1, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-        }
+.flying-image {
+    position: fixed;
+    z-index: 1000;
+    transition: all 0.7s cubic-bezier(0.5, 0, 1, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+}
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-3px); }
-            75% { transform: translateX(3px); }
-        }
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+}
 
-        .cart-shake {
-            animation: shake 0.3s ease-in-out;
-        }
+.cart-shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* ●↓この場所を追加してください：メニューカテゴリボタンのアクティブスタイル */
+.menu-button.active-menu-button {
+    background-color: #10B981 !important; /* Tailwindのgreen-600くらいの色 */
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5); /* リングのような効果 */
+    transform: translateY(-2px); /* 少し上に移動させる効果 */
+}
+
+/* ●↓この場所を追加してください：メニューコンテンツのフェードインアニメーション（任意） */
+.menu-content.active {
+    display: block; /* activeクラスが付いたら表示 */
+    animation: fadeIn 0.5s ease-out; /* フェードインアニメーション */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* ●↑この場所を追加してください */

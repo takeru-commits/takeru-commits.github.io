@@ -151,7 +151,7 @@
         
         function openAdminPanel() {
             // ★★★★★【重要】この行のUIDを、あなた自身の管理者アカウントのUIDに必ず書き換えてください！
-            const adminUID = 'rgKDs7T8tsdoDQi';
+            const adminUID = 'rgKDs7T8tsdoDQigLLX2CkGprx62';
 
             if (currentUser && currentUser.uid === adminUID) {
                 if (!db) { alert("Database connection error."); return; }

@@ -109,7 +109,7 @@ const translations = {
 
 // --- menuItemsにカテゴリ情報を追加しました ---
 const menuItems = [
-    { id: 1, name_en: "Halal Tonkotsu Ramen", name_ja: "ハラール豚骨ラーメン", name_id: "Ramen Tonkotsu Halal", price: 1250, description_en: "Our signature ramen with a rich, creamy pork-free broth, topped with chicken chashu, menma, and a seasoned egg.", description_ja: "当店自慢のラーメン。豚を使わない濃厚でクリーミーなスープに、鶏チャーシュー、メンマ、味玉をトッピングしました。", description_id: "Ramen andalan kami dengan kaldu kaya krim bebas babi, dengan topping chashu ayam, menma, dan telur berbumbu.", imageUrl: "http://googleusercontent.com/image_generation_content/1", category: "japanese" }, 
+    { id: 1, name_en: "Halal Tonkotsu Ramen", name_ja: "ハラール豚骨ラーメン", name_id: "Ramen Tonkotsu Halal", price: 1250, description_en: "Our signature ramen with a rich, creamy pork-free broth, topped with chicken chashu, menma, and a seasoned egg.", description_ja: "当店自慢のラーメン。豚を使わない濃厚でクリーミーなスープに、鶏チャーシュー、メンマ、味玉をトッピングしました。", description_id: "Ramen andalan kami dengan kaldu kaya krim bebas babi, dengan topping chashu ayam, menma, dan telur berbumbu.", imageUrl: "https://placehold.co/600x400/cccccc/ffffff?text=Halal+Tonkotsu+Ramen", category: "japanese" }, // ★修正点ここ！
     { id: 2, name_en: "Nasi Goreng", name_ja: "ナシゴレン", name_id: "Nasi Goreng", price: 1100, description_en: "Classic Indonesian fried rice with sweet soy sauce, chicken, and a fried egg on top.", description_ja: "定番のインドネシア風チャーハン。甘い醤油と鶏肉で炒め、目玉焼きを乗せました。", description_id: "Nasi goreng klasik Indonesia dengan kecap manis, ayam, dan telur mata sapi di atasnya.", imageUrl: "https://images.unsplash.com/photo-1599602235011-95b62a773f77?q=80&w=2849&auto=format&fit=crop", category: "indonesian" }, 
     { id: 3, name_en: "Chicken Satay (5 Skewers)", name_ja: "チキンサテー（5本）", name_id: "Sate Ayam (5 Tusuk)", price: 800, description_en: "Tender, marinated chicken skewers, grilled to perfection and served with a rich peanut sauce.", description_ja: "柔らかく味付けした鶏肉の串焼き。香ばしく焼き上げ、濃厚なピーナッツソースを添えて。", description_id: "Sate ayam empuk yang direndam bumbu, dipanggang sempurna dan disajikan dengan saus kacang yang kaya.", imageUrl: "https://images.unsplash.com/photo-1626084469318-26122a751593?q=80&w=2940&auto=format&fit=crop", category: "indonesian" }, 
     { id: 4, name_en: "Beef Rendang", name_ja: "ビーフ・ルンダン", name_id: "Rendang Sapi", price: 1600, description_en: "Slow-cooked beef in a fragrant mixture of coconut milk and spices until tender and flavorful.", description_ja: "牛肉をココナッツミルクとスパイスで柔らかくなるまでじっくり煮込んだ、風味豊かな一品。", description_id: "Daging sapi yang dimasak perlahan dalam campuran santan dan rempah-rempah yang harum hingga empuk dan beraroma.", imageUrl: "https://images.unsplash.com/photo-1626084474384-5893557a5fb2?q=80&w=2940&auto=format&fit=crop", category: "indonesian" }, 
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return; 
         } 
         dom.formError.classList.add('hidden'); 
-        const originalButtonText = confirmButton.innerHTML; // 変数名を修正
+        const originalButtonText = confirmButton.innerHTML; 
         confirmButton.disabled = true; 
         confirmButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; 
         
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!db || !auth) { 
             alert(translations[currentLang].dbError); 
             confirmButton.disabled = false; 
-            confirmButton.innerHTML = originalButtonText; // 変数名を修正
+            confirmButton.innerHTML = originalButtonText; 
             return; 
         } 
         
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(translations[currentLang].orderError); 
         } finally { 
             confirmButton.disabled = false; 
-            confirmButton.innerHTML = originalButtonText; // 変数名を修正
+            confirmButton.innerHTML = originalButtonText; 
         } 
     }
     async function handleContactSubmit(e) { e.preventDefault(); const submitButton = dom.contactSubmitButton; if (!dom.contactForm.checkValidity()) { return; } const originalButtonText = submitButton.innerHTML; submitButton.disabled = true; submitButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); submitButton.disabled = false; submitButton.innerHTML = originalButtonText; return; } const name = document.getElementById('contact-name').value; const email = document.getElementById('contact-email').value; const message = document.getElementById('contact-message').value; try { await addDoc(collection(db, "inquiries"), { name, email, message, createdAt: serverTimestamp() }); dom.contactFormFeedback.textContent = translations[currentLang].messageSuccess; dom.contactFormFeedback.classList.remove('text-red-500'); dom.contactFormFeedback.classList.add('text-green-600'); dom.contactForm.reset(); } catch (err) { console.error("Error saving inquiry: ", err); dom.contactFormFeedback.textContent = translations[currentLang].orderError; dom.contactFormFeedback.classList.add('text-red-500'); dom.contactFormFeedback.classList.remove('text-green-600'); } finally { setTimeout(() => { dom.contactFormFeedback.textContent = ''; submitButton.disabled = false; submitButton.innerHTML = originalButtonText; }, 4000); } }
@@ -407,7 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].loginToSeeOrders || 'Log in to see your orders.'}</p>`;
             return;
         }
-
 
         try {
             // Firestoreから現在のユーザーの注文を取得 (createdAtで降順ソート)
@@ -618,11 +617,31 @@ document.addEventListener('DOMContentLoaded', () => {
         // Firebase Authが初期化されている場合のみ認証関連のイベントリスナーを登録
         document.getElementById('signup-form').addEventListener('submit', async (e) => { e.preventDefault(); const name = e.target['signup-name'].value; const email = e.target['signup-email'].value; const password = e.target['signup-password'].value; try { const userCredential = await createUserWithEmailAndPassword(auth, email, password); await sendEmailVerification(userCredential.user); if (db) await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, phone: '', address: '', hasCoupon: true }); closeAuthModal('signup-modal'); } catch (error) { showAuthError('signup', error.message); } });
         document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const email = e.target['login-email'].value; const password = e.target['login-password'].value; try { await signInWithEmailAndPassword(auth, email, password); closeAuthModal('login-modal'); } catch (error) { showAuthError('login', error.message); } });
-        document.getElementById('account-form').addEventListener('submit', async (e) => { e.preventDefault(); if (!currentUser || !db) return; const name = e.target['account-name'].value; const phone = e.target['account-phone'].value; const address = e.target['account-address'].value; try { await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); const successMsg = document.getElementById('account-success'); successMsg.classList.remove('hidden'); setTimeout(() => successMsg.classList.add('hidden'), 3000); } catch (error) { showAuthError('account', error.message); } });
+        
+        // マイアカウントフォームの保存処理は変更なし
+        document.getElementById('account-form').addEventListener('submit', async (e) => { 
+            e.preventDefault(); 
+            if (!currentUser || !db) return; 
+            const name = e.target['account-name'].value; 
+            const phone = e.target['account-phone'].value; 
+            const address = e.target['account-address'].value; 
+            try { 
+                await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); 
+                // currentUserData を更新
+                currentUserData = { ...currentUserData, name, phone, address };
+                const successMsg = document.getElementById('account-success'); 
+                successMsg.classList.remove('hidden'); 
+                setTimeout(() => successMsg.classList.add('hidden'), 3000); 
+            } catch (error) { 
+                showAuthError('account', error.message); 
+            } 
+        });
             
         [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => {
             if (btn) btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); });
         });
+
+        // ★修正点：マイアカウントボタンクリック時の処理を改善
         [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { 
             // Firebase Authが初期化されているか確認
             if (!currentUser || !auth || !db) {
@@ -630,15 +649,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             dom.mobileMenu.classList.add('hidden'); 
+
+            // 最新のユーザーデータをFirestoreから取得
             const userDoc = await getDoc(doc(db, "users", currentUser.uid)); 
             if (userDoc.exists()) { 
                 currentUserData = userDoc.data(); 
             } else { 
+                // ユーザーデータが存在しない場合はデフォルト値を設定
                 currentUserData = { name: '', phone: '', address: '', hasCoupon: false }; 
             } 
+
+            // DOM要素にデータを反映
             document.getElementById('account-name').value = currentUserData.name || ''; 
             document.getElementById('account-phone').value = currentUserData.phone || ''; 
             document.getElementById('account-address').value = currentUserData.address || ''; 
+            
+            // クーポン情報を更新
             const couponList = dom.myCouponsList; 
             couponList.innerHTML = ''; 
             if (currentUserData && currentUserData.hasCoupon) { 
@@ -651,6 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await loadUserOrders(currentUser.uid); 
             openAuthModal('account-modal'); 
         }));
+
         [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => {
             if (btn) btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); });
         });
@@ -664,15 +691,15 @@ document.addEventListener('DOMContentLoaded', () => {
         [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => {
             if (btn) { 
                 btn.disabled = true;
-                btn.textContent = "Login (Unavailable)";
-                btn.classList.add('bg-gray-400');
+                btn.textContent = translations[currentLang].loginBtn + " (Unavailable)"; // 多言語対応
+                btn.classList.add('bg-gray-400', 'cursor-not-allowed');
             }
         });
         [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => {
              if (btn) { 
                 btn.disabled = true;
-                btn.textContent = "Sign Up (Unavailable)";
-                btn.classList.add('bg-gray-400');
+                btn.textContent = translations[currentLang].signupBtn + " (Unavailable)"; // 多言語対応
+                btn.classList.add('bg-gray-400', 'cursor-not-allowed');
             }
         });
         [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => {

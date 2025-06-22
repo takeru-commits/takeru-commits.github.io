@@ -215,7 +215,8 @@
                 <button id="close-account-modal-button" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
             </div>
             <div class="p-6 space-y-6">
-                <form id="account-form" class="space-y-4"> <div>
+                <form id="account-form" class="space-y-4" novalidate>
+                    <div>
                         <label for="account-name" data-key="nameLabel" class="block text-sm font-medium text-gray-700"></label>
                         <input type="text" id="account-name" required class="mt-1 block w-full px-3 py-2 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
                     </div>
@@ -241,8 +242,7 @@
                 <div class="border-t pt-6">
                     <h4 data-key="myOrders" class="text-lg font-semibold mb-3 text-gray-800"></h4>
                     <div id="my-orders-list" class="space-y-3">
-                        <p class="text-gray-500 text-sm">ログインして注文履歴を表示します。</p>
-                    </div>
+                        </div>
                 </div>
             </div>
         </div>

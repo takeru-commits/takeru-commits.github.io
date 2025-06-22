@@ -16,6 +16,7 @@ const firebaseConfig = {
 let db, auth;
 
 // Firebase ConfigのAPIキーが存在し、かつそれが「YOUR_API_KEY」のようなダミーでない場合にのみ初期化する
+// あなたのAPIキーが設定されている場合、この条件はtrueになりFirebaseが初期化されます。
 if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
     try { 
         const app = initializeApp(firebaseConfig); 
@@ -90,9 +91,19 @@ const translations = {
         sweetsMenuBtn: "Manisan", 
         drinksMenuBtn: "Minuman",
         addBtn: "Tambah", addedBtn: "Ditambahkan", 
-        howToOrderTitle: "Cara Memesan", step1Title: "1. Pilih", step1Desc: "Pilih hidangan favorit Anda dari menu kami.", step2Title: "2. Bayar", step2Desc: "Masukkan data Anda dan konfirmasi pesanan Anda.", step3Title: "3. Nikmati", ste
-        // (省略されている部分)
-        // ...
+        howToOrderTitle: "Cara Memesan", step1Title: "1. Pilih", step1Desc: "Pilih hidangan favorit Anda dari menu kami.", step2Title: "2. Bayar", step2Desc: "Masukkan data Anda dan konfirmasi pesanan Anda.", step3Title: "3. Nikmati", step3Desc: "Makanan lezat Anda akan diantarkan ke rumah Anda.", // <-- この行を完全に復元しました
+        aboutTitle: "Tentang Kami", historyTitle: "Sejarah Kami", historyDesc: "Layanan ini dimulai oleh seorang Jepang dan seorang Indonesia yang tinggal bersama di Prefektur Yamaguchi. Misi kami adalah untuk mengantarkan makanan Halal yang otentik, lezat, dan tanpa rasa khawatir kepada semua orang yang membututuhkan di komunitas kami. Kami mencurahkan hati kami ke dalam setiap hidangan, dengan harapan dapat memberikan Anda rasa nyaman seperti di rumah sendiri.", 
+        contactTitle: "Hubungi Kami", messageLabel: "Pesan", sendMessageBtn: "Kirim Pesan", messageSuccess: "Terima Kasih! Pesan Anda telah terkirim.", 
+        footerRights: "&copy; 2025 Yamaguchi Halal Eats. Semua Hak Dilindungi.", adminPanelBtn: "Panel Admin", 
+        cartTitle: "Keranjang Belanja", cartEmpty: "Keranjang Anda kosong.", cartTotal: "Total:", checkoutBtn: "Bayar", 
+        checkoutModalTitle: "Konfirmasi Pesanan Anda", yourInfoTitle: "Informasi Anda", nameLabel: "Nama Lengkap", phoneLabel: "Nomor Telepon", emailLabel: "Alamat Email", addressLabel: "Alamat Pengiriman", addressNote: "Harap masukkan alamat rumah Anda saja. Pengiriman ke institusi publik tidak tersedia.", formError: "Harap isi semua kolom.", totalPaymentLabel: "Total Pembayaran:", confirmOrderBtn: "Konfirmasi Pesanan", 
+        thankYouTitle: "Terima Kasih Atas Pesanan Anda!", thankYouDesc: "Pesanan Anda telah berhasil dilakukan.", closeBtn: "Tutup", 
+        createAccountTitle: "Buat Akun Anda", passwordLabel: "Kata Sandi", loginTitle: "Masuk ke Akun Anda", myAccountTitle: "Akun Saya", profileUpdateSuccess: "Profil berhasil diperbarui!", saveChangesBtn: "Simpan Perubahan", welcome: "Selamat Datang", preorderYamaguchi: "Pengiriman untuk {date} tersedia untuk penduduk Kota Yamaguchi. Silakan lanjutkan pesanan Anda.", preorderUbe: "Pengiriman untuk {date} tersedia untuk penduduk Kota Ube. Silakan lanjutkan pesanan Anda.", dbError: "Kesalahan koneksi database. Pesanan tidak dapat disimpan karena Firebase tidak dikonfigurasi.", orderError: "Terjadi kesalahan saat memproses pesanan Anda. Silakan coba lagi.", passwordIncorrect: "Kata sandi salah.", signupBenefit: "Daftar untuk melewati pengisian info pengiriman setiap saat & dapatkan kupon ¥100!", subtotalLabel: "Subtotal", discountLabel: "Diskon Kupon", applyCouponBtn: "Gunakan Kupon ¥100", couponApplied: "✓ Kupon Digunakan", myCoupons: "Kupon Saya",  myOrders: "Riwayat Pesanan", welcomeCoupon: "Kupon Selamat Datang ¥100 OFF", noCoupons: "Anda tidak memiliki kupon yang tersedia.", whatIsHalalTitle: "Apa itu Makanan Halal?", whatIsHalalDesc: "Halal adalah kata dalam bahasa Arab yang berarti 'diperbolehkan' menurut hukum Islam. Agar makanan dapat disertifikasi sebagai Halal, makanan tersebut harus mematuhi serangkaian aturan ketat mengenai bahan dan metode persiapan. Ini memastikan bahwa makanan tersebut bersih, suci, dan disiapkan dengan cara yang manusiawi." ,
+        noOrders: "Anda tidak memiliki pesanan apa pun.", 
+        loginToSeeOrders: "Masuk untuk melihat pesanan Anda.", 
+        orderId: "ID Pesanan", 
+        preorderInfo: "Pra-pesan",
+        orderLoadError: "Gagal memuat pesanan."
     }
 };
 

@@ -1,10 +1,10 @@
 // Firebase SDK Import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"; 
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
     
 const firebaseConfig = {
-    apiKey: "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y", // ★★★ あなたの実際のFirebase APIキーです！この値は正しいので変更不要です ★★★
+    apiKey: "AIzaSyBVH-Wr8v--A0uSn8Z82fFLdn_v6SZoT8Y", // ★★★ あなたの実際のFirebase APIキーに置き換えてください！ ★★★
     authDomain: "yamaguchi-halal-eats.firebaseapp.com",
     projectId: "yamaguchi-halal-eats",
     storageBucket: "yamaguchi-halal-eats.appspot.com",
@@ -14,23 +14,11 @@ const firebaseConfig = {
 };
 
 let db, auth;
-
-// Firebase ConfigのAPIキーが存在し、かつそれが「YOUR_API_KEY」のようなダミーでない場合にのみ初期化する
-// あなたのAPIキーが設定されている場合、この条件はtrueになりFirebaseが初期化されます。
 if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
-    try { 
-        const app = initializeApp(firebaseConfig); 
-        db = getFirestore(app); 
-        auth = getAuth(app); 
-    }
-    catch (e) { 
-        console.error("Error initializing Firebase:", e); 
-        alert("Firebaseの初期化に失敗しました。アプリケーションが正しく動作しない可能性があります。コンソールを確認してください。");
-    }
-} else {
-    console.warn("Firebase APIキーが設定されていないか、デフォルト値のままです。Firebase機能は動作しません。");
+    try { const app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); }
+    catch (e) { console.error("Error initializing Firebase:", e); }
 }
-
+    
 // --- Translations & Data ---
 const translations = {
     en: { 
@@ -38,6 +26,7 @@ const translations = {
         heroTitle: "Authentic Halal Cuisine, Delivered to Your Door.", heroSubtitle: "We deliver our original Halal dishes with care, anywhere in Yamaguchi Prefecture.", searchPlaceholder: "Search for our dishes...", 
         calendarTitle: "Pre-Order Calendar ({month})", calendarDesc: "Click a date on the calendar to select a pre-order day.<br>Only residents of the listed city can pre-order on that day.", 
         menuTitle: "Our Signature Menu", 
+        // メニューカテゴリボタンの翻訳を追加
         japaneseMenuBtn: "Japanese Cuisine", 
         indonesianMenuBtn: "Indonesian Cuisine", 
         sweetsMenuBtn: "Sweets", 
@@ -50,18 +39,14 @@ const translations = {
         cartTitle: "Shopping Cart", cartEmpty: "Your cart is empty.", cartTotal: "Total:", checkoutBtn: "Checkout", 
         checkoutModalTitle: "Confirm Your Order", yourInfoTitle: "Your Information", nameLabel: "Full Name", phoneLabel: "Phone Number", emailLabel: "Email Address", addressLabel: "Delivery Address", addressNote: "Please enter your home address only. Delivery to public institutions is not available.", formError: "Please fill in all fields.", totalPaymentLabel: "Total Payment:", confirmOrderBtn: "Confirm Order", 
         thankYouTitle: "Thank You for Your Order!", thankYouDesc: "Your order has been successfully placed.", closeBtn: "Close", 
-        createAccountTitle: "Create Your Account", passwordLabel: "Password", loginTitle: "Log In to Your Account", myAccountTitle: "My Account", profileUpdateSuccess: "Profile updated successfully!", saveChangesBtn: "Save Changes", welcome: "Welcome", preorderYamaguchi: "Delivery for {date} is available for residents of Yamaguchi City. Please proceed with your order.", preorderUbe: "Delivery for {date} is available for residents of Ube City. Please proceed with your order.", dbError: "Database connection error. Order cannot be saved because Firebase is not configured.", orderError: "An error occurred while processing your order. Please try again.", passwordIncorrect: "Incorrect password.", signupBenefit: "Sign up to skip entering your delivery info every time & get a ¥100 coupon!", subtotalLabel: "Subtotal", discountLabel: "Coupon Discount", applyCouponBtn: "Apply ¥100 Coupon", couponApplied: "✓ Coupon Applied", myCoupons: "My Coupons", myOrders: "Order History", welcomeCoupon: "¥100 OFF Welcome Coupon", noCoupons: "You have no available coupons.", whatIsHalalTitle: "What is Halal Food?", whatIsHalalDesc: "Halal is an Arabic word that means 'permissible' according to Islamic law. For food to be certified as Halal, it must adhere to a strict set of rules regarding ingredients and preparation methods. This ensures that the food is clean, pure, and prepared in a humane way.",
-        noOrders: "You have no orders yet.", 
-        loginToSeeOrders: "Log in to see your orders.", 
-        orderId: "Order ID", 
-        preorderInfo: "Pre-order",
-        orderLoadError: "Failed to load orders." 
+        createAccountTitle: "Create Your Account", passwordLabel: "Password", loginTitle: "Log In to Your Account", myAccountTitle: "My Account", profileUpdateSuccess: "Profile updated successfully!", saveChangesBtn: "Save Changes", welcome: "Welcome", preorderYamaguchi: "Delivery for {date} is available for residents of Yamaguchi City. Please proceed with your order.", preorderUbe: "Delivery for {date} is available for residents of Ube City. Please proceed with your order.", dbError: "Database connection error. Order cannot be saved because Firebase is not configured.", orderError: "An error occurred while processing your order. Please try again.", passwordIncorrect: "Incorrect password.", signupBenefit: "Sign up to skip entering your delivery info every time & get a ¥100 coupon!", subtotalLabel: "Subtotal", discountLabel: "Coupon Discount", applyCouponBtn: "Apply ¥100 Coupon", couponApplied: "✓ Coupon Applied", myCoupons: "My Coupons", myOrders: "My Orders", welcomeCoupon: "¥100 OFF Welcome Coupon", noCoupons: "You have no available coupons.", whatIsHalalTitle: "What is Halal Food?", whatIsHalalDesc: "Halal is an Arabic word that means 'permissible' according to Islamic law. For food to be certified as Halal, it must adhere to a strict set of rules regarding ingredients and preparation methods. This ensures that the food is clean, pure, and prepared in a humane way." 
     },
     ja: { 
         homeLink: "ホーム", menuLink: "メニュー", howToOrderLink: "注文方法", aboutUsLink: "私たちについて", contactLink: "お問い合わせ", calendarLink: "カレンダー", loginBtn: "ログイン", signupBtn: "新規登録", myAccountBtn: '<i class="fas fa-user-circle mr-1"></i>アカウント', logoutBtn: '<i class="fas fa-sign-out-alt mr-1"></i>ログアウト', 
         heroTitle: "本格ハラール料理を、ご自宅で。", heroSubtitle: "山口県内、どこへでも真心を込めてお届けします。", searchPlaceholder: "料理を検索...", 
         calendarTitle: "事前注文カレンダー ({month})", calendarDesc: "カレンダーの日付をクリックして、事前注文日を選択してください。<br>記載された市にお住まいの方のみ、その日に事前注文が可能です。", 
         menuTitle: "私たちの特製メニュー", 
+        // メニューカテゴリボタンの翻訳を追加
         japaneseMenuBtn: "日本料理", 
         indonesianMenuBtn: "インドネシア料理", 
         sweetsMenuBtn: "スイーツ", 
@@ -74,42 +59,33 @@ const translations = {
         cartTitle: "ショッピングカート", cartEmpty: "カートは空です。", cartTotal: "合計:", checkoutBtn: "レジに進む", 
         checkoutModalTitle: "ご注文の確認", yourInfoTitle: "お客様情報", nameLabel: "お名前", phoneLabel: "電話番号", emailLabel: "メールアドレス", addressLabel: "配達先住所", addressNote: "ご自宅の住所のみご記入ください。公共機関への配達はできません。", formError: "すべての項目を入力してください。", totalPaymentLabel: "お支払い合計:", confirmOrderBtn: "注文を確定する", 
         thankYouTitle: "ご注文ありがとうございます！", thankYouDesc: "ご注文が正常に完了しました。", closeBtn: "閉じる", 
-        createAccountTitle: "アカウント作成", passwordLabel: "パスワード", loginTitle: "アカウントにログイン", myAccountTitle: "マイアカウント", profileUpdateSuccess: "プロフィールを更新しました！", saveChangesBtn: "変更を保存", welcome: "ようこそ", preorderYamaguchi: "【{date}】は【山口市】にお住まいの方の配達日です。このままご注文ください。", preorderUbe: "【{date}】は【宇部市】にお住まいの方の配達日です。このままご注文ください。", dbError: "データベース接続エラー。Firebaseが設定されていないため、注文を保存できません。", orderError: "注文処理中にエラーが発生しました。もう一度お試しください。", passwordIncorrect: "パスワードが違います。", signupBenefit: "会員登録をすると、毎回の配達先入力が不要になり、100円クーポンもご利用いただけます！", subtotalLabel: "小計", discountLabel: "クーポン割引", applyCouponBtn: "100円クーポンを使う", couponApplied: "✓ クーポン適用済み", myCoupons: "マイクーポン", myOrders: "注文履歴", welcomeCoupon: "100円OFF ウェルカムクーポン", noCoupons: "利用可能なクーポンはありません。", whatIsHalalTitle: "ハラールフードとは？", whatIsHalalDesc: "ハラールとは、アラビア語で「（イスラムの教えにおいて）許されている」という意味の言葉です。ハラールフードとして認証されるためには、食材や調理法に関して厳格な基準を守る必要があります。これにより、食品が清潔で純粋であり、人道的な方法で調理されていることが保証されます。",
-        noOrders: "注文履歴はありません。", 
-        loginToSeeOrders: "ログインして注文履歴を表示します。", 
-        orderId: "注文ID", 
-        preorderInfo: "事前注文",
-        orderLoadError: "注文の読み込みに失敗しました。"
+        createAccountTitle: "アカウント作成", passwordLabel: "パスワード", loginTitle: "アカウントにログイン", myAccountTitle: "マイアカウント", profileUpdateSuccess: "プロフィールを更新しました！", saveChangesBtn: "変更を保存", welcome: "ようこそ", preorderYamaguchi: "【{date}】は【山口市】にお住まいの方の配達日です。このままご注文ください。", preorderUbe: "【{date}】は【宇部市】にお住まいの方の配達日です。このままご注文ください。", dbError: "データベース接続エラー。Firebaseが設定されていないため、注文を保存できません。", orderError: "注文処理中にエラーが発生しました。もう一度お試しください。", passwordIncorrect: "パスワードが違います。", signupBenefit: "会員登録をすると、毎回の配達先入力が不要になり、100円クーポンもご利用いただけます！", subtotalLabel: "小計", discountLabel: "クーポン割引", applyCouponBtn: "100円クーポンを使う", couponApplied: "✓ クーポン適用済み", myCoupons: "マイクーポン", myOrders: "注文履歴", welcomeCoupon: "100円OFF ウェルカムクーポン", noCoupons: "利用可能なクーポンはありません。", whatIsHalalTitle: "ハラールフードとは？", whatIsHalalDesc: "ハラールとは、アラビア語で「（イスラムの教えにおいて）許されている」という意味の言葉です。ハラールフードとして認証されるためには、食材や調理法に関して厳格な基準を守る必要があります。これにより、食品が清潔で純粋であり、人道的な方法で調理されていることが保証されます。" 
     },
     id: { 
         homeLink: "Beranda", menuLink: "Menu Kami", howToOrderLink: "Cara Pesan", aboutUsLink: "Tentang Kami", contactLink: "Kontak", calendarLink: "Kalender", loginBtn: "Masuk", signupBtn: "Daftar", myAccountBtn: '<i class="fas fa-user-circle mr-1"></i>Akun Saya', logoutBtn: '<i class="fas fa-sign-out-alt mr-1"></i>Keluar', 
         heroTitle: "Masakan Halal Otentik, Diantar ke Pintu Anda.", heroSubtitle: "Kami mengantarkan hidangan Halal asli kami dengan hati-hati, ke mana saja di Prefektur Yamaguchi.", searchPlaceholder: "Cari hidangan kami...", 
         calendarTitle: "Kalender Pra-Pesan ({month})", calendarDesc: "Klik tanggal di kalender untuk memilih hari pra-pesan.<br>Hanya penduduk kota yang terdaftar yang dapat melakukan pra-pesan pada hari itu.", 
         menuTitle: "Menu Andalan Kami", 
+        // メニューカテゴリボタンの翻訳を追加
         japaneseMenuBtn: "Masakan Jepang", 
         indonesianMenuBtn: "Masakan Indonesia", 
         sweetsMenuBtn: "Manisan", 
         drinksMenuBtn: "Minuman",
         addBtn: "Tambah", addedBtn: "Ditambahkan", 
-        howToOrderTitle: "Cara Memesan", step1Title: "1. Pilih", step1Desc: "Pilih hidangan favorit Anda dari menu kami.", step2Title: "2. Bayar", step2Desc: "Masukkan data Anda dan konfirmasi pesanan Anda.", step3Title: "3. Nikmati", step3Desc: "Makanan lezat Anda akan diantarkan ke rumah Anda.", // <-- この行を完全に復元しました
+        howToOrderTitle: "Cara Memesan", step1Title: "1. Pilih", step1Desc: "Pilih hidangan favorit Anda dari menu kami.", step2Title: "2. Bayar", step2Desc: "Masukkan data Anda dan konfirmasi pesanan Anda.", step3Title: "3. Nikmati", step3Desc: "Makanan lezat Anda akan diantarkan ke rumah Anda.", 
         aboutTitle: "Tentang Kami", historyTitle: "Sejarah Kami", historyDesc: "Layanan ini dimulai oleh seorang Jepang dan seorang Indonesia yang tinggal bersama di Prefektur Yamaguchi. Misi kami adalah untuk mengantarkan makanan Halal yang otentik, lezat, dan tanpa rasa khawatir kepada semua orang yang membututuhkan di komunitas kami. Kami mencurahkan hati kami ke dalam setiap hidangan, dengan harapan dapat memberikan Anda rasa nyaman seperti di rumah sendiri.", 
         contactTitle: "Hubungi Kami", messageLabel: "Pesan", sendMessageBtn: "Kirim Pesan", messageSuccess: "Terima Kasih! Pesan Anda telah terkirim.", 
         footerRights: "&copy; 2025 Yamaguchi Halal Eats. Semua Hak Dilindungi.", adminPanelBtn: "Panel Admin", 
         cartTitle: "Keranjang Belanja", cartEmpty: "Keranjang Anda kosong.", cartTotal: "Total:", checkoutBtn: "Bayar", 
         checkoutModalTitle: "Konfirmasi Pesanan Anda", yourInfoTitle: "Informasi Anda", nameLabel: "Nama Lengkap", phoneLabel: "Nomor Telepon", emailLabel: "Alamat Email", addressLabel: "Alamat Pengiriman", addressNote: "Harap masukkan alamat rumah Anda saja. Pengiriman ke institusi publik tidak tersedia.", formError: "Harap isi semua kolom.", totalPaymentLabel: "Total Pembayaran:", confirmOrderBtn: "Konfirmasi Pesanan", 
         thankYouTitle: "Terima Kasih Atas Pesanan Anda!", thankYouDesc: "Pesanan Anda telah berhasil dilakukan.", closeBtn: "Tutup", 
-        createAccountTitle: "Buat Akun Anda", passwordLabel: "Kata Sandi", loginTitle: "Masuk ke Akun Anda", myAccountTitle: "Akun Saya", profileUpdateSuccess: "Profil berhasil diperbarui!", saveChangesBtn: "Simpan Perubahan", welcome: "Selamat Datang", preorderYamaguchi: "Pengiriman untuk {date} tersedia untuk penduduk Kota Yamaguchi. Silakan lanjutkan pesanan Anda.", preorderUbe: "Pengiriman untuk {date} tersedia untuk penduduk Kota Ube. Silakan lanjutkan pesanan Anda.", dbError: "Kesalahan koneksi database. Pesanan tidak dapat disimpan karena Firebase tidak dikonfigurasi.", orderError: "Terjadi kesalahan saat memproses pesanan Anda. Silakan coba lagi.", passwordIncorrect: "Kata sandi salah.", signupBenefit: "Daftar untuk melewati pengisian info pengiriman setiap saat & dapatkan kupon ¥100!", subtotalLabel: "Subtotal", discountLabel: "Diskon Kupon", applyCouponBtn: "Gunakan Kupon ¥100", couponApplied: "✓ Kupon Digunakan", myCoupons: "Kupon Saya",  myOrders: "Riwayat Pesanan", welcomeCoupon: "Kupon Selamat Datang ¥100 OFF", noCoupons: "Anda tidak memiliki kupon yang tersedia.", whatIsHalalTitle: "Apa itu Makanan Halal?", whatIsHalalDesc: "Halal adalah kata dalam bahasa Arab yang berarti 'diperbolehkan' menurut hukum Islam. Agar makanan dapat disertifikasi sebagai Halal, makanan tersebut harus mematuhi serangkaian aturan ketat mengenai bahan dan metode persiapan. Ini memastikan bahwa makanan tersebut bersih, suci, dan disiapkan dengan cara yang manusiawi." ,
-        noOrders: "Anda tidak memiliki pesanan apa pun.", 
-        loginToSeeOrders: "Masuk untuk melihat pesanan Anda.", 
-        orderId: "ID Pesanan", 
-        preorderInfo: "Pra-pesan",
-        orderLoadError: "Gagal memuat pesanan."
+        createAccountTitle: "Buat Akun Anda", passwordLabel: "Kata Sandi", loginTitle: "Masuk ke Akun Anda", myAccountTitle: "Akun Saya", profileUpdateSuccess: "Profil berhasil diperbarui!", saveChangesBtn: "Simpan Perubahan", welcome: "Selamat Datang", preorderYamaguchi: "Pengiriman untuk {date} tersedia untuk penduduk Kota Yamaguchi. Silakan lanjutkan pesanan Anda.", preorderUbe: "Pengiriman untuk {date} tersedia untuk penduduk Kota Ube. Silakan lanjutkan pesanan Anda.", dbError: "Kesalahan koneksi database. Pesanan tidak dapat disimpan karena Firebase tidak dikonfigurasi.", orderError: "Terjadi kesalahan saat memproses pesanan Anda. Silakan coba lagi.", passwordIncorrect: "Kata sandi salah.", signupBenefit: "Daftar untuk melewati pengisian info pengiriman setiap saat & dapatkan kupon ¥100!", subtotalLabel: "Subtotal", discountLabel: "Diskon Kupon", applyCouponBtn: "Gunakan Kupon ¥100", couponApplied: "✓ Kupon Digunakan", myCoupons: "Kupon Saya",  myOrders: "Riwayat Pesanan", welcomeCoupon: "Kupon Selamat Datang ¥100 OFF", noCoupons: "Anda tidak memiliki kupon yang tersedia.", whatIsHalalTitle: "Apa itu Makanan Halal?", whatIsHalalDesc: "Halal adalah kata dalam bahasa Arab yang berarti 'diperbolehkan' menurut hukum Islam. Agar makanan dapat disertifikasi sebagai Halal, makanan tersebut harus mematuhi serangkaian aturan ketat mengenai bahan dan metode persiapan. Ini memastikan bahwa makanan tersebut bersih, suci, dan disiapkan dengan cara yang manusiawi." 
     }
 };
 
 // --- menuItemsにカテゴリ情報を追加しました ---
 const menuItems = [
-    { id: 1, name_en: "Halal Tonkotsu Ramen", name_ja: "ハラール豚骨ラーメン", name_id: "Ramen Tonkotsu Halal", price: 1250, description_en: "Our signature ramen with a rich, creamy pork-free broth, topped with chicken chashu, menma, and a seasoned egg.", description_ja: "当店自慢のラーメン。豚を使わない濃厚でクリーミーなスープに、鶏チャーシュー、メンマ、味玉をトッピングしました。", description_id: "Ramen andalan kami dengan kaldu kaya krim bebas babi, dengan topping chashu ayam, menma, dan telur berbumbu.", imageUrl: "https://placehold.co/600x400/cccccc/ffffff?text=Halal+Tonkotsu+Ramen", category: "japanese" }, // ★修正点ここ！
+    { id: 1, name_en: "Halal Tonkotsu Ramen", name_ja: "ハラール豚骨ラーメン", name_id: "Ramen Tonkotsu Halal", price: 1250, description_en: "Our signature ramen with a rich, creamy pork-free broth, topped with chicken chashu, menma, and a seasoned egg.", description_ja: "当店自慢のラーメン。豚を使わない濃厚でクリーミーなスープに、鶏チャーシュー、メンマ、味玉をトッピングしました。", description_id: "Ramen andalan kami dengan kaldu kaya krim bebas babi, dengan topping chashu ayam, menma, dan telur berbumbu.", imageUrl: "http://googleusercontent.com/image_generation_content/1", category: "japanese" }, 
     { id: 2, name_en: "Nasi Goreng", name_ja: "ナシゴレン", name_id: "Nasi Goreng", price: 1100, description_en: "Classic Indonesian fried rice with sweet soy sauce, chicken, and a fried egg on top.", description_ja: "定番のインドネシア風チャーハン。甘い醤油と鶏肉で炒め、目玉焼きを乗せました。", description_id: "Nasi goreng klasik Indonesia dengan kecap manis, ayam, dan telur mata sapi di atasnya.", imageUrl: "https://images.unsplash.com/photo-1599602235011-95b62a773f77?q=80&w=2849&auto=format&fit=crop", category: "indonesian" }, 
     { id: 3, name_en: "Chicken Satay (5 Skewers)", name_ja: "チキンサテー（5本）", name_id: "Sate Ayam (5 Tusuk)", price: 800, description_en: "Tender, marinated chicken skewers, grilled to perfection and served with a rich peanut sauce.", description_ja: "柔らかく味付けした鶏肉の串焼き。香ばしく焼き上げ、濃厚なピーナッツソースを添えて。", description_id: "Sate ayam empuk yang direndam bumbu, dipanggang sempurna dan disajikan dengan saus kacang yang kaya.", imageUrl: "https://images.unsplash.com/photo-1626084469318-26122a751593?q=80&w=2940&auto=format&fit=crop", category: "indonesian" }, 
     { id: 4, name_en: "Beef Rendang", name_ja: "ビーフ・ルンダン", name_id: "Rendang Sapi", price: 1600, description_en: "Slow-cooked beef in a fragrant mixture of coconut milk and spices until tender and flavorful.", description_ja: "牛肉をココナッツミルクとスパイスで柔らかくなるまでじっくり煮込んだ、風味豊かな一品。", description_id: "Daging sapi yang dimasak perlahan dalam campuran santan dan rempah-rempah yang harum hingga empuk dan beraroma.", imageUrl: "https://images.unsplash.com/photo-1626084474384-5893557a5fb2?q=80&w=2940&auto=format&fit=crop", category: "indonesian" }, 
@@ -134,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
         calendarGrid: document.getElementById('calendar-grid'),
         preorderStatus: document.getElementById('preorder-status'),
         cartButton: document.getElementById('cart-button'), mobileCartButton: document.getElementById('mobile-cart-button'), cartSidebar: document.getElementById('cart-sidebar'), closeCartButton: document.getElementById('close-cart-button'), cartItemsContainer: document.getElementById('cart-items'), cartTotalElement: document.getElementById('cart-total'), cartSubtotalElement: document.getElementById('cart-subtotal'), discountRow: document.getElementById('discount-row'), cartDiscountElement: document.getElementById('cart-discount'), couponSection: document.getElementById('coupon-section'), applyCouponButton: document.getElementById('apply-coupon-button'), cartCountElements: [document.getElementById('cart-count'), document.getElementById('mobile-cart-count')], emptyCartMessage: document.getElementById('empty-cart-message'), checkoutButton: document.getElementById('checkout-button'), checkoutModal: document.getElementById('checkout-modal'), closeCheckoutModalButton: document.getElementById('close-checkout-modal-button'), checkoutForm: document.getElementById('checkout-form'), checkoutTotalElement: document.getElementById('checkout-total'), formError: document.getElementById('form-error'), successModal: document.getElementById('success-modal'), closeSuccessModalButton: document.getElementById('close-success-modal-button'), adminPanelButton: document.getElementById('admin-panel-button'), adminModal: document.getElementById('admin-modal'), closeAdminModalButton: document.getElementById('close-admin-modal-button'), orderListContainer: document.getElementById('order-list'), authLinksDesktop: document.getElementById('auth-links-desktop'), userLinksDesktop: document.getElementById('user-links-desktop'), welcomeMessageDesktop: document.getElementById('welcome-message-desktop'), authLinksMobile: document.getElementById('auth-links-mobile'), userLinksMobile: document.getElementById('user-links-mobile'), welcomeMessageMobile: document.getElementById('welcome-message-mobile'), signupModal: document.getElementById('signup-modal'), loginModal: document.getElementById('login-modal'), accountModal: document.getElementById('account-modal'), languageSwitcher: document.getElementById('language-switcher'), languageSwitcherMobile: document.getElementById('language-switcher-mobile'), mobileMenu: document.getElementById('mobile-menu'), mobileMenuButton: document.getElementById('mobile-menu-button'), closeMobileMenuButton: document.getElementById('close-mobile-menu-button'), contactForm: document.getElementById('contact-form'), contactFormFeedback: document.getElementById('contact-form-feedback'), contactSubmitButton: document.getElementById('contact-submit-button'), myCouponsList: document.getElementById('my-coupons-list'),
-        myOrdersList: document.getElementById('my-orders-list'), // 新しくDOM要素を追加
         // メニューカテゴリ関連のDOM要素を追加
         menuButtons: document.querySelectorAll('.menu-button'),
         menuDisplayArea: document.getElementById('menu-display-area')
@@ -256,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = button.closest('.bg-white.rounded-lg.shadow-lg'); 
         const itemImage = card.querySelector('img');
         
+        // ★★★ ここから修正部分 ★★★
         // 現在表示されているカートアイコン（デスクトップ用またはモバイル用）を検出
         let cartIcon = null;
         if (dom.cartButton && dom.cartButton.offsetParent !== null) { // offsetParentがnullでない場合、要素が表示されている
@@ -296,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartIcon.classList.remove('cart-shake');
             }, 700);
         }
+        // ★★★ ここまで修正部分 ★★★
 
         const itemId = parseInt(button.dataset.itemId);
         const menuItem = menuItems.find(m => m.id === itemId);
@@ -321,196 +298,27 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeCart() { dom.cartSidebar.classList.add('translate-x-full'); }
     async function openCheckoutModal() { const total = cart.reduce((t, e) => t + e.price * e.quantity, 0); const emailInput = document.getElementById('customer-email'); dom.checkoutTotalElement.textContent = `¥${total.toLocaleString()}`; if (currentUser) { const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { const userData = userDoc.data(); document.getElementById('customer-name').value = userData.name || ''; document.getElementById('customer-phone').value = userData.phone || ''; document.getElementById('customer-address').value = userData.address || ''; } emailInput.value = currentUser.email; emailInput.readOnly = true; emailInput.classList.add('bg-gray-100', 'cursor-not-allowed'); } else { dom.checkoutForm.reset(); emailInput.readOnly = false; emailInput.classList.remove('bg-gray-100', 'cursor-not-allowed'); } dom.checkoutModal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; setTimeout(() => document.getElementById('checkout-modal-content').classList.remove('scale-95'), 10); }
     function closeCheckoutModal() { document.getElementById('checkout-modal-content').classList.add('scale-95'); dom.checkoutModal.classList.add('hidden'); document.body.style.overflow = 'auto'; dom.formError.classList.add('hidden'); }
-    async function handleOrderSubmit(e) { 
-        e.preventDefault(); 
-        const confirmButton = document.getElementById('confirm-order-button'); 
-        if (!dom.checkoutForm.checkValidity()) { 
-            dom.formError.classList.remove('hidden'); 
-            return; 
-        } 
-        dom.formError.classList.add('hidden'); 
-        const originalButtonText = confirmButton.innerHTML; 
-        confirmButton.disabled = true; 
-        confirmButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; 
-        
-        // Firebaseが初期化されているか再確認
-        if (!db || !auth) { 
-            alert(translations[currentLang].dbError); 
-            confirmButton.disabled = false; 
-            confirmButton.innerHTML = originalButtonText; 
-            return; 
-        } 
-        
-        const formData = new FormData(dom.checkoutForm); 
-        const customerDetails = Object.fromEntries(formData.entries()); 
-        const orderItems = cart.map(item => ({ 
-            name: item[`name_${currentLang}`] || item.name_en, // 注文時の言語で保存
-            quantity: item.quantity, 
-            price: item.price 
-        })); 
-        const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0); 
-        const discount = isCouponApplied && currentUserData?.hasCoupon ? 100 : 0; 
-        const orderTotal = subtotal - discount; 
-        
-        const orderData = { 
-            customerInfo: customerDetails, 
-            items: orderItems, 
-            subtotal: subtotal, 
-            discount: discount, 
-            total: orderTotal, 
-            createdAt: serverTimestamp(), 
-            userId: currentUser ? currentUser.uid : 'guest' 
-        }; 
-        if (selectedPreOrder.date) { 
-            orderData.preOrderInfo = selectedPreOrder; 
-        } 
-        try { 
-            const saveDataPromise = addDoc(collection(db, "orders"), orderData); 
-            const minDelayPromise = new Promise(resolve => setTimeout(resolve, 2000)); 
-            await Promise.all([saveDataPromise, minDelayPromise]); 
-            
-            if (isCouponApplied && currentUser) { 
-                await setDoc(doc(db, "users", currentUser.uid), { hasCoupon: false }, { merge: true }); 
-                currentUserData.hasCoupon = false; 
-            } 
-            
-            closeCheckoutModal(); 
-            showSuccessModal(); 
-            closeCart(); 
-            cart = []; 
-            selectedPreOrder = { date: null, city: null }; 
-            isCouponApplied = false; 
-            dom.preorderStatus.textContent = ''; 
-            document.querySelectorAll('.calendar-day.selected').forEach(d => d.classList.remove('selected')); 
-            updateCart(); 
-            dom.checkoutForm.reset(); 
-        } catch (err) { 
-            console.error("Error saving order: ", err); 
-            alert(translations[currentLang].orderError); 
-        } finally { 
-            confirmButton.disabled = false; 
-            confirmButton.innerHTML = originalButtonText; 
-        } 
-    }
+    async function handleOrderSubmit(e) { e.preventDefault(); const confirmButton = document.getElementById('confirm-order-button'); if (!dom.checkoutForm.checkValidity()) { dom.formError.classList.remove('hidden'); return; } dom.formError.classList.add('hidden'); const originalButtonText = confirmButton.innerHTML; confirmButton.disabled = true; confirmButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); confirmButton.disabled = false; confirmButton.innerHTML = originalButtonText; return; } const formData = new FormData(dom.checkoutForm); const customerDetails = Object.fromEntries(formData.entries()); const orderItems = cart.map(item => ({ name: item.name_en, quantity: item.quantity, price: item.price })); const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0); const discount = isCouponApplied && currentUserData?.hasCoupon ? 100 : 0; const orderTotal = subtotal - discount; const orderData = { customerInfo: customerDetails, items: orderItems, subtotal: subtotal, discount: discount, total: orderTotal, createdAt: serverTimestamp(), userId: currentUser ? currentUser.uid : 'guest' }; if (selectedPreOrder.date) { orderData.preOrderInfo = selectedPreOrder; } try { const saveDataPromise = addDoc(collection(db, "orders"), orderData); const minDelayPromise = new Promise(resolve => setTimeout(resolve, 2000)); await Promise.all([saveDataPromise, minDelayPromise]); if (isCouponApplied && currentUser) { await setDoc(doc(db, "users", currentUser.uid), { hasCoupon: false }, { merge: true }); currentUserData.hasCoupon = false; } closeCheckoutModal(); showSuccessModal(); closeCart(); cart = []; selectedPreOrder = { date: null, city: null }; isCouponApplied = false; dom.preorderStatus.textContent = ''; document.querySelectorAll('.calendar-day.selected').forEach(d => d.classList.remove('selected')); updateCart(); dom.checkoutForm.reset(); } catch (err) { console.error("Error saving order: ", err); alert(translations[currentLang].orderError); } finally { confirmButton.disabled = false; confirmButton.innerHTML = originalButtonText; } }
     async function handleContactSubmit(e) { e.preventDefault(); const submitButton = dom.contactSubmitButton; if (!dom.contactForm.checkValidity()) { return; } const originalButtonText = submitButton.innerHTML; submitButton.disabled = true; submitButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`; if (!db) { alert(translations[currentLang].dbError); submitButton.disabled = false; submitButton.innerHTML = originalButtonText; return; } const name = document.getElementById('contact-name').value; const email = document.getElementById('contact-email').value; const message = document.getElementById('contact-message').value; try { await addDoc(collection(db, "inquiries"), { name, email, message, createdAt: serverTimestamp() }); dom.contactFormFeedback.textContent = translations[currentLang].messageSuccess; dom.contactFormFeedback.classList.remove('text-red-500'); dom.contactFormFeedback.classList.add('text-green-600'); dom.contactForm.reset(); } catch (err) { console.error("Error saving inquiry: ", err); dom.contactFormFeedback.textContent = translations[currentLang].orderError; dom.contactFormFeedback.classList.add('text-red-500'); dom.contactFormFeedback.classList.remove('text-green-600'); } finally { setTimeout(() => { dom.contactFormFeedback.textContent = ''; submitButton.disabled = false; submitButton.innerHTML = originalButtonText; }, 4000); } }
     function showSuccessModal() { dom.successModal.classList.remove('hidden'); }
     function closeSuccessModal() { dom.successModal.classList.add('hidden'); }
         
-    // --- ユーザーの注文履歴をロードする関数 ---
-    async function loadUserOrders(userId) {
-        // Firebaseが初期化されているか、ユーザーIDが存在するかをチェック
-        if (!db || !auth) { 
-            dom.myOrdersList.innerHTML = `<p class="text-red-500 text-sm">${translations[currentLang].orderLoadError || 'Failed to load orders.'}</p>`;
-            return;
-        }
-        if (!userId) {
-            dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].loginToSeeOrders || 'Log in to see your orders.'}</p>`;
-            return;
-        }
-
-        try {
-            // Firestoreから現在のユーザーの注文を取得 (createdAtで降順ソート)
-            const q = query(collection(db, "orders"), where("userId", "==", userId), orderBy("createdAt", "desc"));
-            
-            // リアルタイムリスナーではなく、一度だけデータを取得
-            const querySnapshot = await getDocs(q); 
-
-            if (querySnapshot.empty) {
-                dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noOrders || 'You have no orders yet.'}</p>`;
-                return;
-            }
-
-            let ordersHtml = '';
-            querySnapshot.forEach(doc => {
-                const order = doc.data();
-                const orderId = doc.id;
-                // toLocaleStringの言語を現在の言語に合わせる
-                const orderDate = order.createdAt ? order.createdAt.toDate().toLocaleString(currentLang) : 'N/A'; 
-                const total = order.total.toLocaleString();
-
-                const itemsHtml = order.items.map(item => `
-                    <li class="flex justify-between text-sm text-gray-600">
-                        <span>${item.name} x ${item.quantity}</span>
-                        <span>¥${item.price.toLocaleString()}</span>
-                    </li>
-                `).join('');
-
-                ordersHtml += `
-                    <div class="border p-4 rounded-lg shadow-sm bg-gray-50">
-                        <div class="flex justify-between items-center mb-2">
-                            <p class="font-semibold text-gray-700">${translations[currentLang].orderId || 'Order ID'}: ${orderId}</p>
-                            <p class="text-sm text-gray-500">${orderDate}</p>
-                        </div>
-                        <ul class="list-none p-0 m-0 space-y-1">
-                            ${itemsHtml}
-                        </ul>
-                        <div class="flex justify-between items-center border-t pt-2 mt-2">
-                            <span class="font-bold text-gray-800">${translations[currentLang].cartTotal || 'Total'}:</span>
-                            <span class="font-bold text-green-600">¥${total}</span>
-                        </div>
-                        ${order.preOrderInfo ? `
-                            <p class="text-xs text-blue-600 mt-2">
-                                ${translations[currentLang].preorderInfo || 'Pre-order'}: ${order.preOrderInfo.date} (${order.preOrderInfo.city})
-                            </p>
-                        ` : ''}
-                    </div>
-                `;
-            });
-            dom.myOrdersList.innerHTML = ordersHtml;
-
-        } catch (error) {
-            console.error("Error loading user orders:", error);
-            dom.myOrdersList.innerHTML = `<p class="text-red-500 text-sm">${translations[currentLang].orderLoadError || 'Failed to load orders.'}</p>`;
-        }
-    }
-
     function openAdminPanel() {
         // ★★★★★【重要】この行のUIDを、あなた自身の管理者アカウントのUIDに必ず書き換えてください！
         const adminUID = 'rgKDs7T8tsdoDQigLLX2CkGprx62';
 
-        // Firebaseが初期化されているか確認
-        if (!db || !auth) {
-            alert("Firebaseが初期化されていません。管理者パネルは開けません。");
-            return;
-        }
-
         if (currentUser && currentUser.uid === adminUID) {
+            if (!db) { alert("Database connection error."); return; }
             dom.adminModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            loadOrders(); // 管理者パネルの注文履歴は引き続き loadOrders で表示
+            loadOrders();
         } else {
             alert("管理者権限がありません。");
         }
     }
 
     function closeAdminPanel() { dom.adminModal.classList.add('hidden'); document.body.style.overflow = 'auto'; }
-    // 注意: この loadOrders 関数は管理者パネル用です。ユーザーのマイアカウントの注文履歴には loadUserOrders を使います。
-    function loadOrders() { 
-        // Firebaseが初期化されているか確認
-        if (!db || !auth) {
-            dom.orderListContainer.innerHTML = '<p class="text-center text-red-500">データベース接続エラー: Firebaseが初期化されていません。</p>';
-            return;
-        }
-
-        const t = query(collection(db, "orders"), orderBy("createdAt", "desc")); 
-        onSnapshot(t, (snapshot) => { // onSnapshot はリアルタイム更新用なので引数名を snapshot に
-            if (snapshot.empty) { 
-                dom.orderListContainer.innerHTML = '<p class="text-center text-gray-500">No orders yet.</p>'; 
-                return; 
-            } 
-            dom.orderListContainer.innerHTML = ''; 
-            snapshot.forEach(doc => { // doc を使う
-                const e = doc.data(); // doc.data() でデータを取得
-                const a = document.createElement('div'); 
-                a.className = "bg-white p-4 rounded-lg shadow mb-4"; 
-                const n = e.items.map(item => `<li>${item.name} (x${item.quantity}) - ¥${(item.price * item.quantity).toLocaleString()}</li>`).join(''); // item を使う
-                let s = ''; 
-                e.preOrderInfo && (s = `<div class="mt-2 p-2 bg-green-100 rounded-md"><p class="font-semibold text-green-800">Pre-Order: ${e.preOrderInfo.date} (for ${e.preOrderInfo.city})</p></div>`); 
-                a.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-bold text-lg">Order ID: ${doc.id}</p> <p class="text-sm text-gray-500">Date: ${e.createdAt ? e.createdAt.toDate().toLocaleString("en-US") : 'N/A'}</p> </div> <p class="font-bold text-xl text-green-600">Total: ¥${e.total.toLocaleString()}</p> </div> ${s} <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Customer Info:</h4> <p><strong>Name:</strong> ${e.customerInfo.name}</p> <p><strong>Phone:</strong> ${e.customerInfo.phone}</p> <p><strong>Email:</strong> ${e.customerInfo.email}</p> <p><strong>Address:</strong> ${e.customerInfo.address}</p> </div> <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Order Details:</h4> <ul class="list-disc list-inside">${n}</ul> </div> `; 
-                dom.orderListContainer.appendChild(a); 
-            }); 
-        }); 
-    }
+    function loadOrders() { if (!db) return; const t = query(collection(db, "orders"), orderBy("createdAt", "desc")); onSnapshot(t, t => { if (t.empty) { dom.orderListContainer.innerHTML = '<p class="text-center text-gray-500">No orders yet.</p>'; return; } dom.orderListContainer.innerHTML = ''; t.forEach(t => { const e = t.data(), a = document.createElement('div'); a.className = "bg-white p-4 rounded-lg shadow mb-4"; const n = e.items.map(t => `<li>${t.name} (x${t.quantity}) - ¥${(t.price * t.quantity).toLocaleString()}</li>`).join(''); let s = ''; e.preOrderInfo && (s = `<div class="mt-2 p-2 bg-green-100 rounded-md"><p class="font-semibold text-green-800">Pre-Order: ${e.preOrderInfo.date} (for ${e.preOrderInfo.city})</p></div>`); a.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-bold text-lg">Order ID: ${t.id}</p> <p class="text-sm text-gray-500">Date: ${e.createdAt ? e.createdAt.toDate().toLocaleString("en-US") : 'N/A'}</p> </div> <p class="font-bold text-xl text-green-600">Total: ¥${e.total.toLocaleString()}</p> </div> ${s} <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Customer Info:</h4> <p><strong>Name:</strong> ${e.customerInfo.name}</p> <p><strong>Phone:</strong> ${e.customerInfo.phone}</p> <p><strong>Email:</strong> ${e.customerInfo.email}</p> <p><strong>Address:</strong> ${e.customerInfo.address}</p> </div> <div class="mt-4 border-t pt-4"> <h4 class="font-semibold">Order Details:</h4> <ul class="list-disc list-inside">${n}</ul> </div> `; dom.orderListContainer.appendChild(a); }); }); }
         
     function filterMenu() {
         const query = dom.searchBar.value.toLowerCase();
@@ -537,22 +345,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const userName = name ? name.split(' ')[0] : 'User';
         const welcomeText = `${translations[currentLang].welcome || 'Welcome'}, ${userName}!`;
         if (user) {
-            // Firebaseが初期化されていることを確認
-            if (!auth || !db) {
-                console.error("Firebase AuthまたはFirestoreが初期化されていません。UIの更新をスキップします。");
-                return;
-            }
             [dom.authLinksDesktop, dom.authLinksMobile].forEach(el => el.classList.add('hidden'));
             [dom.userLinksDesktop, dom.userLinksMobile].forEach(el => el.classList.remove('hidden'));
             dom.welcomeMessageDesktop.textContent = welcomeText;
             dom.welcomeMessageMobile.textContent = welcomeText;
-            // ログイン時にマイアカウントの注文履歴をロード
-            loadUserOrders(user.uid); 
         } else {
             [dom.authLinksDesktop, dom.authLinksMobile].forEach(el => el.classList.remove('hidden'));
             [dom.userLinksDesktop, dom.userLinksMobile].forEach(el => el.classList.add('hidden'));
-            // ログアウト時に注文履歴をクリア
-            if (dom.myOrdersList) dom.myOrdersList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].loginToSeeOrders || 'Log in to see your orders.'}</p>`;
         }
         updateCart();
     }
@@ -573,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const slideshowImages = [
             'ramen.png',
             'lassi.png'
-        ];          
+        ];         
         slideshowImages.forEach(src => {
             const img = new Image();
             img.src = src;
@@ -592,122 +391,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初回ロード時に言語設定を適用
     updateLanguage(savedLang); 
         
-    // Firebaseが初期化されているかどうかにかかわらず、onAuthStateChangedリスナーを登録
-    // ただし、authがundefinedの場合は実行しない
-    if(auth) { // authオブジェクトが存在する場合のみリスナーを登録
-        onAuthStateChanged(auth, async (user) => { 
-            if (user) { 
-                currentUser = user; 
-                // Firestoreも初期化されていることを確認してからユーザーデータを取得
-                if (db) { 
-                    const userDoc = await getDoc(doc(db, "users", user.uid)); 
-                    updateUIForAuthState(user, userDoc.exists() ? userDoc.data() : null); 
-                    // ここで loadUserOrders を呼び出すことで、ユーザー情報がロードされた後に履歴が読み込まれる
-                    loadUserOrders(user.uid); 
-                } else {
-                    console.warn("Firestoreが初期化されていないため、ユーザーデータをロードできません。");
-                    updateUIForAuthState(user, null); // ユーザーデータなしでUIを更新
-                }
-            } else { 
-                currentUser = null; 
-                updateUIForAuthState(null); 
-            } 
-        });
-
-        // Firebase Authが初期化されている場合のみ認証関連のイベントリスナーを登録
-        document.getElementById('signup-form').addEventListener('submit', async (e) => { e.preventDefault(); const name = e.target['signup-name'].value; const email = e.target['signup-email'].value; const password = e.target['signup-password'].value; try { const userCredential = await createUserWithEmailAndPassword(auth, email, password); await sendEmailVerification(userCredential.user); if (db) await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, phone: '', address: '', hasCoupon: true }); closeAuthModal('signup-modal'); } catch (error) { showAuthError('signup', error.message); } });
+    if(auth) {
+        onAuthStateChanged(auth, async (user) => { if (user) { currentUser = user; const userDoc = await getDoc(doc(db, "users", user.uid)); updateUIForAuthState(user, userDoc.exists() ? userDoc.data() : null); } else { currentUser = null; updateUIForAuthState(null); } });
+        document.getElementById('signup-form').addEventListener('submit', async (e) => { e.preventDefault(); const name = e.target['signup-name'].value; const email = e.target['signup-email'].value; const password = e.target['signup-password'].value; try { const userCredential = await createUserWithEmailAndPassword(auth, email, password); await sendEmailVerification(userCredential.user); await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, phone: '', address: '', hasCoupon: true }); closeAuthModal('signup-modal'); } catch (error) { showAuthError('signup', error.message); } });
         document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const email = e.target['login-email'].value; const password = e.target['login-password'].value; try { await signInWithEmailAndPassword(auth, email, password); closeAuthModal('login-modal'); } catch (error) { showAuthError('login', error.message); } });
-        
-        // マイアカウントフォームの保存処理は変更なし
-        document.getElementById('account-form').addEventListener('submit', async (e) => { 
-            e.preventDefault(); 
-            if (!currentUser || !db) return; 
-            const name = e.target['account-name'].value; 
-            const phone = e.target['account-phone'].value; 
-            const address = e.target['account-address'].value; 
-            try { 
-                await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); 
-                // currentUserData を更新
-                currentUserData = { ...currentUserData, name, phone, address };
-                const successMsg = document.getElementById('account-success'); 
-                successMsg.classList.remove('hidden'); 
-                setTimeout(() => successMsg.classList.add('hidden'), 3000); 
-            } catch (error) { 
-                showAuthError('account', error.message); 
-            } 
-        });
+        document.getElementById('account-form').addEventListener('submit', async (e) => { e.preventDefault(); if (!currentUser) return; const name = e.target['account-name'].value; const phone = e.target['account-phone'].value; const address = e.target['account-address'].value; try { await setDoc(doc(db, "users", currentUser.uid), { name, phone, address }, { merge: true }); const successMsg = document.getElementById('account-success'); successMsg.classList.remove('hidden'); setTimeout(() => successMsg.classList.add('hidden'), 3000); } catch (error) { showAuthError('account', error.message); } });
             
-        [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => {
-            if (btn) btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); });
-        });
-
-        // ★修正点：マイアカウントボタンクリック時の処理を改善
-        [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { 
-            // Firebase Authが初期化されているか確認
-            if (!currentUser || !auth || !db) {
-                alert("ログイン状態を確認できません。もう一度お試しください。");
-                return;
-            }
-            dom.mobileMenu.classList.add('hidden'); 
-
-            // 最新のユーザーデータをFirestoreから取得
-            const userDoc = await getDoc(doc(db, "users", currentUser.uid)); 
-            if (userDoc.exists()) { 
-                currentUserData = userDoc.data(); 
-            } else { 
-                // ユーザーデータが存在しない場合はデフォルト値を設定
-                currentUserData = { name: '', phone: '', address: '', hasCoupon: false }; 
-            } 
-
-            // DOM要素にデータを反映
-            document.getElementById('account-name').value = currentUserData.name || ''; 
-            document.getElementById('account-phone').value = currentUserData.phone || ''; 
-            document.getElementById('account-address').value = currentUserData.address || ''; 
-            
-            // クーポン情報を更新
-            const couponList = dom.myCouponsList; 
-            couponList.innerHTML = ''; 
-            if (currentUserData && currentUserData.hasCoupon) { 
-                couponList.innerHTML = `<div class="bg-orange-100 border border-orange-200 text-orange-800 text-sm rounded-lg p-3 flex items-center"><i class="fas fa-ticket-alt mr-3"></i><span>${translations[currentLang].welcomeCoupon}</span></div>`; 
-            } else { 
-                couponList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noCoupons}</p>`; 
-            } 
-            
-            // マイアカウントを開くときに注文履歴をロードする
-            await loadUserOrders(currentUser.uid); 
-            openAuthModal('account-modal'); 
-        }));
-
-        [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => {
-            if (btn) btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); });
-        });
-        [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => {
-            if (btn) btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); });
-        });
-    } else {
-        console.error("Firebase Authが初期化されていないため、認証関連のイベントリスナーは登録されませんでした。");
-        // Firebaseが初期化されない場合の認証関連ボタンの動作を無効化するなどのUI処理をここに追加することも検討
-        // 例: ログイン/新規登録ボタンを非表示にする、クリックイベントを削除するなど
-        [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => {
-            if (btn) { 
-                btn.disabled = true;
-                btn.textContent = translations[currentLang].loginBtn + " (Unavailable)"; // 多言語対応
-                btn.classList.add('bg-gray-400', 'cursor-not-allowed');
-            }
-        });
-        [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => {
-             if (btn) { 
-                btn.disabled = true;
-                btn.textContent = translations[currentLang].signupBtn + " (Unavailable)"; // 多言語対応
-                btn.classList.add('bg-gray-400', 'cursor-not-allowed');
-            }
-        });
-        [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => {
-            if (btn) btn.style.display = 'none';
-        });
-        [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => {
-            if (btn) btn.style.display = 'none';
-        });
+        [document.getElementById('logout-button-desktop'), document.getElementById('logout-button-mobile')].forEach(btn => btn.addEventListener('click', () => { signOut(auth); dom.mobileMenu.classList.add('hidden'); }));
+        [document.getElementById('account-button-desktop'), document.getElementById('account-button-mobile')].forEach(btn => btn.addEventListener('click', async () => { if (!currentUser) return; dom.mobileMenu.classList.add('hidden'); const userDoc = await getDoc(doc(db, "users", currentUser.uid)); if (userDoc.exists()) { currentUserData = userDoc.data(); } else { currentUserData = { name: '', phone: '', address: '', hasCoupon: false }; } document.getElementById('account-name').value = currentUserData.name || ''; document.getElementById('account-phone').value = currentUserData.phone || ''; document.getElementById('account-address').value = currentUserData.address || ''; const couponList = dom.myCouponsList; couponList.innerHTML = ''; if (currentUserData && currentUserData.hasCoupon) { couponList.innerHTML = `<div class="bg-orange-100 border border-orange-200 text-orange-800 text-sm rounded-lg p-3 flex items-center"><i class="fas fa-ticket-alt mr-3"></i><span>${translations[currentLang].welcomeCoupon}</span></div>`; } else { couponList.innerHTML = `<p class="text-gray-500 text-sm">${translations[currentLang].noCoupons}</p>`; } openAuthModal('account-modal'); }));
+        [document.getElementById('signup-button-desktop'), document.getElementById('signup-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('signup-modal'); dom.mobileMenu.classList.add('hidden'); }));
+        [document.getElementById('login-button-desktop'), document.getElementById('login-button-mobile')].forEach(btn => btn.addEventListener('click', () => { openAuthModal('login-modal'); dom.mobileMenu.classList.add('hidden'); }));
     }
         
     dom.menuDisplayArea.addEventListener('click', addToCart); 

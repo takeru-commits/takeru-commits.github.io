@@ -76,7 +76,7 @@
                     }
                 }
             });
-           
+
             renderMenu(menuItems);
             const today = new Date();
             generateCalendar(today.getFullYear(), today.getMonth() + 1);
@@ -198,8 +198,6 @@
 
             const slideshowImages = [
                 'ramen.png',
-                'yakitori.png',
-                'nasigoreng.png',
                 'lassi.png'
             ];           
             slideshowImages.forEach(src => {
